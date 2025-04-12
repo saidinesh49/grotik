@@ -1,0 +1,68 @@
+/* Scrollbar styles */
+.root :global(::-webkit-scrollbar) {
+  @apply w-2 h-2;
+}
+
+.root :global(::-webkit-scrollbar-track) {
+  @apply bg-gray-50;
+}
+
+.root :global(::-webkit-scrollbar-thumb) {
+  @apply bg-gray-300 rounded;
+}
+
+.root :global(::-webkit-scrollbar-thumb:hover) {
+  @apply bg-gray-400;
+}
+
+/* Focus styles */
+.root :global(:focus:not(:focus-visible)) {
+  @apply outline-none;
+}
+
+.root :global(:focus-visible) {
+  @apply ring-2 ring-blue-500 ring-offset-2 outline-none;
+}
+
+/* Navigation styles */
+.nav {
+  @apply bg-white border-b border-gray-200;
+}
+
+.navContainer {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.navContent {
+  @apply flex justify-between h-16;
+}
+
+.logo {
+  @apply text-xl font-bold text-blue-600;
+}
+
+.navLinks {
+  @apply hidden sm:ml-6 sm:flex sm:space-x-8;
+}
+
+.navLink {
+  @apply inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900;
+}
+
+/* Main content styles */
+.main {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+/* Footer styles */
+.footer {
+  @apply bg-white border-t border-gray-200 mt-auto;
+}
+
+.footerContent {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
+}
+
+.footerText {
+  @apply text-center text-sm text-gray-500;
+}

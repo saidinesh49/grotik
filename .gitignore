@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+/.fetch-client
 
 # next.js
 /.next/

@@ -72,7 +72,7 @@
 	<div class="mx-auto w-full max-w-screen-xl xl:pb-2">
 		<div class="gap-4 p-4 px-8 py-16 sm:pb-16 md:flex md:justify-between">
 			<div class="mb-12 flex flex-col gap-4">
-				<a href="https://animation-svelte.vercel.app" class="flex items-center gap-2">
+				<a href="/" class="flex items-center gap-2">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -89,7 +89,7 @@
 						/><path d="M9 3v7" /><path d="M21 10h-7" /><path d="M3 15h9" /></svg
 					>
 					<span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
-						Svee UI
+						Grotik
 					</span>
 				</a>
 				<p class="max-w-xs">UI Library for Design Engineers</p>
@@ -138,7 +138,7 @@
 				{' '}
 				{new Date().getFullYear()}
 				{' '}
-				<a href="/" class="cursor-pointer">Svee UI</a>
+				<a href="/" class="cursor-pointer">Grotik</a>
 				. All Rights Reserved.
 			</span>
 		</div>

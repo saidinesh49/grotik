@@ -1,7 +1,10 @@
 <script lang="ts">
-	import GitHubSvg from '$lib/imgs/github-dark.svg';
+	import GoogleSvg from '$lib/imgs/Google.svg';
+	import FacebookLightSvg from '$lib/imgs/facebook-light.svg';
+	import FacebookDarkSvg from '$lib/imgs/facebook-dark.svg';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon } from 'lucide-svelte';
+	import { signInWithGoogle, signInWithFacebook } from '$lib/stores/auth';
 
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -37,16 +40,45 @@
 
 	let loading = false;
 	let isFormLoading = false;
-	let githubSignIn = async () => {
+
+	async function handleGoogleSignIn() {
 		loading = true;
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		try {
+			const result = await signInWithGoogle();
+			if (!result.success) {
+				toast.error('Failed to sign in with Google', {
+					description: 'Please try again.'
+				});
+			}
+		} catch (error) {
+			toast.error('Something went wrong', {
+				description: 'Failed to sign in with Google. Please try again.'
+			});
+		}
 		loading = false;
-	};
+	}
+
+	async function handleFacebookSignIn() {
+		loading = true;
+		try {
+			const result = await signInWithFacebook();
+			if (!result.success) {
+				toast.error('Failed to sign in with Facebook', {
+					description: 'Please try again.'
+				});
+			}
+		} catch (error) {
+			toast.error('Something went wrong', {
+				description: 'Failed to sign in with Facebook. Please try again.'
+			});
+		}
+		loading = false;
+	}
 </script>
 
 <svelte:head>
-	<title>Sign In | Svee UI</title>
-	<meta name="description" content="Sign In for Svee UI" />
+	<title>Sign In | Grotik</title>
+	<meta name="description" content="Sign In for Grotik" />
 </svelte:head>
 
 <div class="container flex h-screen w-screen flex-col items-center justify-center">
@@ -85,14 +117,25 @@
 				<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
 			</div>
 		</div>
-		<Button on:click={githubSignIn} variant="outline" disabled={loading}>
-			{#if loading}
-				<Loader class="mr-2 size-4 animate-spin" />
-			{:else}
-				<img src={GitHubSvg} alt="github" class="mr-2 size-4" />
-			{/if}
-			Github</Button
-		>
+		<div class="flex flex-col gap-2">
+			<Button on:click={handleGoogleSignIn} variant="outline" disabled={loading}>
+				{#if loading}
+					<Loader class="mr-2 size-4 animate-spin" />
+				{:else}
+					<img src={GoogleSvg} alt="Google" class="mr-2 size-4" />
+				{/if}
+				Google
+			</Button>
+			<Button on:click={handleFacebookSignIn} variant="outline" disabled={loading}>
+				{#if loading}
+					<Loader class="mr-2 size-4 animate-spin" />
+				{:else}
+					<img src={FacebookLightSvg} alt="Facebook" class="mr-2 size-4 block dark:hidden" />
+					<img src={FacebookDarkSvg} alt="Facebook" class="mr-2 size-4 hidden dark:block" />
+				{/if}
+				Facebook
+			</Button>
+		</div>
 		<p class="px-8 text-center text-sm text-muted-foreground">
 			<a href="/signup" class="hover:text-brand underline underline-offset-4">
 				Don&apos;t have an account? Sign Up
@@ -100,3 +143,12 @@
 		</p>
 	</div>
 </div>
+
+<style>
+    :global(.dark) {
+        --background: 0 0% 0%;
+        --foreground: 0 0% 100%;
+        --muted: 0 0% 20%;
+        --muted-foreground: 0 0% 60%;
+    }
+</style>

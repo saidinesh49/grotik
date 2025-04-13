@@ -38,8 +38,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@firebase/auth": "^1.10.0",
     "bits-ui": "^0.21.13",
     "clsx": "^2.1.1",
+    "firebase": "^11.6.0",
     "formsnap": "^1.0.1",
     "lucide-svelte": "^0.416.0",
     "mode-watcher": "^0.4.0",

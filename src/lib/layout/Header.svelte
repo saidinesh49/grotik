@@ -51,7 +51,7 @@
 >
 	<!-- {#if innerWidth < 768} -->
 		<div class="container flex h-14 items-center justify-between">
-			<a class="text-md flex items-center" href="/"> Svee UI </a>
+			<a class="text-md flex items-center" href="/"> Grotik </a>
 
 			<div class="ml-auto flex h-full items-center">
 				<a class="mr-6 text-sm" href="/signin"> Log in </a>
@@ -82,7 +82,7 @@
 >
 	{#if hamburgerMenuIsOpen === true}
 		<div class="container flex h-14 items-center justify-between">
-			<a class="text-md flex items-center" href="/"> Svee UI </a>
+			<a class="text-md flex items-center" href="/"> Grotik </a>
 
 			<button class="md:hidden" use:toggleOverflowHidden>
 				<span class="sr-only">Toggle menu</span>

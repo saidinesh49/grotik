@@ -1,7 +1,10 @@
 <script lang="ts">
-	import GitHubSvg from '$lib/imgs/github-dark.svg';
+	import GoogleSvg from '$lib/imgs/Google.svg';
+	import FacebookLightSvg from '$lib/imgs/facebook-light.svg';
+	import FacebookDarkSvg from '$lib/imgs/facebook-dark.svg';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon } from 'lucide-svelte';
+	import { signInWithGoogle, signInWithFacebook } from '$lib/stores/auth';
 
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -29,23 +32,52 @@
 					description: 'Your sign in request failed. Please try again.'
 				});
 			}
-		},
+		}
 	});
 
 	const { form: formData, enhance } = form;
 
 	let loading = false;
 	let isFormLoading = false;
-	let githubSignIn = async () => {
+
+	async function handleGoogleSignIn() {
 		loading = true;
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		try {
+			const result = await signInWithGoogle();
+			if (!result.success) {
+				toast.error('Failed to sign up with Google', {
+					description: 'Please try again.'
+				});
+			}
+		} catch (error) {
+			toast.error('Something went wrong', {
+				description: 'Failed to sign up with Google. Please try again.'
+			});
+		}
 		loading = false;
-	};
+	}
+
+	async function handleFacebookSignIn() {
+		loading = true;
+		try {
+			const result = await signInWithFacebook();
+			if (!result.success) {
+				toast.error('Failed to sign up with Facebook', {
+					description: 'Please try again.'
+				});
+			}
+		} catch (error) {
+			toast.error('Something went wrong', {
+				description: 'Failed to sign up with Facebook. Please try again.'
+			});
+		}
+		loading = false;
+	}
 </script>
 
 <svelte:head>
-	<title>Sign Up | Svee UI</title>
-	<meta name="description" content="Sign Up for Svee UI" />
+	<title>Sign Up | Grotik</title>
+	<meta name="description" content="Sign Up for Grotik" />
 </svelte:head>
 
 <div class="container flex h-screen w-screen flex-col items-center justify-center">
@@ -56,7 +88,7 @@
 	<div class="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
 		<div class="flex flex-col gap-2 text-center">
 			<!-- {/* <Icons.logo class="mx-auto h-6 w-6" /> */} -->
-			<h1 class="text-2xl font-semibold tracking-tight">Welcome to Svee UI</h1>
+			<h1 class="text-2xl font-semibold tracking-tight">Welcome to Grotik</h1>
 			<p class="text-sm text-muted-foreground">Sign up for an account</p>
 		</div>
 		<!-- Form -->
@@ -84,14 +116,25 @@
 				<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
 			</div>
 		</div>
-		<Button on:click={githubSignIn} variant="outline" disabled={loading}>
-			{#if loading}
-				<Loader class="mr-2 size-4 animate-spin" />
-			{:else}
-				<img src={GitHubSvg} alt="github" class="mr-2 size-4" />
-			{/if}
-			Github</Button
-		>
+		<div class="flex flex-col gap-2">
+			<Button on:click={handleGoogleSignIn} variant="outline" disabled={loading}>
+				{#if loading}
+					<Loader class="mr-2 size-4 animate-spin" />
+				{:else}
+					<img src={GoogleSvg} alt="Google" class="mr-2 size-4" />
+				{/if}
+				Google
+			</Button>
+			<Button on:click={handleFacebookSignIn} variant="outline" disabled={loading}>
+				{#if loading}
+					<Loader class="mr-2 size-4 animate-spin" />
+				{:else}
+					<img src={FacebookLightSvg} alt="Facebook" class="mr-2 size-4 block dark:hidden" />
+					<img src={FacebookDarkSvg} alt="Facebook" class="mr-2 size-4 hidden dark:block" />
+				{/if}
+				Facebook
+			</Button>
+		</div>
 
 		<p class="px-8 text-center text-sm text-muted-foreground">
 			<a href="/signin" class="hover:text-brand underline underline-offset-4">
@@ -100,3 +143,12 @@
 		</p>
 	</div>
 </div>
+
+<style>
+    :global(.dark) {
+        --background: 0 0% 0%;
+        --foreground: 0 0% 100%;
+        --muted: 0 0% 20%;
+        --muted-foreground: 0 0% 60%;
+    }
+</style>

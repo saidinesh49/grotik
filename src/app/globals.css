@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 249, 250, 251;
+  --text: 17, 24, 39;
+  --blue: 37, 99, 235;
+  --shadow: 0 0 0 0;
+}
+
+body {
+  color: rgb(var(--text));
+  background: rgb(var(--bg));
+}
+
+::selection {
+  background: rgba(var(--blue), 0.1);
+  color: rgb(var(--text));
+}
+
+@layer components {
+  .g-link {
+    @apply text-blue-600 hover:text-blue-800 transition-colors;
+  }
+
+  .g-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}

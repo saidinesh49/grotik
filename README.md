@@ -1,83 +1,58 @@
-# Grotik
+<div align="center">
+  <img src="public/grotik_logo.png" alt="Grotik Logo" width="200" />
+</div>
 
-A language learning platform with integrated financial literacy education using blockchain technology.
+# ⚡ Grotik
 
-## Project Structure
+Where language meets finance, magic happens.
 
-```
-src/
-├── app/                # Next.js app directory
-├── components/         # React components
-│   └── common/        # Shared components with CSS modules
-├── contexts/          # React contexts
-├── services/          # External service integrations
-│   ├── groq/         # Groq AI service
-│   └── stellar/      # Stellar blockchain service
-├── styles/           # Global styles and Tailwind config
-├── types/            # TypeScript type definitions
-└── utils/            # Utility functions
-```
+> "Learn a language, gain a world. Master finance, own your future."
 
-## CSS Architecture
+## 🌟 Why Grotik?
 
-We use a combination of:
-1. Minimal Tailwind CSS setup (`src/styles/tailwind.css`)
-2. CSS Modules for component-specific styles (`*.module.css`)
-3. Utility-first approach with Tailwind classes for one-off styles
+- **Learn While You Earn** - Master new languages while understanding real financial concepts
+- **Interactive Blockchain** - Experience safe, simulated financial transactions
+- **AI-Powered Learning** - Get personalized lessons that adapt to your style
 
-### CSS Module Example
+## 🚀 Features
 
-```css
-/* Button.module.css */
-.button {
-  @apply inline-flex items-center justify-center rounded-md;
-}
+🎓 **Smart Learning**
+- Real-world conversations
+- Dynamic difficulty adjustment
+- Progress tracking that makes sense
 
-.primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700;
-}
-```
+💰 **Financial Playground**
+- Safe blockchain transactions
+- Virtual currency management
+- International money concepts
 
-```tsx
-// Button.tsx
-import styles from './Button.module.css';
+🤖 **AI Companion**
+- Natural conversations
+- Instant feedback
+- Cultural insights
 
-export function Button({ variant = 'primary' }) {
-  return (
-    <button className={styles[variant]}>
-      Click me
-    </button>
-  );
-}
-```
+## 🛠️ Built With Love Using
 
-## Development
+- Next.js 13 - For lightning-fast experiences
+- Stellar SDK - Safe blockchain playground
+- Groq AI - Your personal language mentor
+- TailwindCSS - Beautiful, responsive design
+
+## 🏃‍♂️ Quick Start
 
 ```bash
-# Install dependencies
+# Get started in seconds
 npm install
-
-# Start development server
 npm run dev
 
-# Build for production
+# Ready for the world?
 npm run build
 ```
 
-## Environment Variables
+## 🌈 Join The Journey
 
-Create a `.env.local` file:
+Every word you learn, every concept you master, brings you closer to global citizenship.
 
-```env
-GROQ_API_KEY=your_api_key
-STELLAR_NETWORK=testnet
-```
+---
 
-## Technologies
-
-- Next.js 14
-- TypeScript
-- Tailwind CSS
-- CSS Modules
-- Groq AI
-- Stellar SDK
+Made with 💙 by passionate educators and tech enthusiasts

@@ -8,6 +8,11 @@ Where language meets finance, magic happens.
 
 > "Learn a language, gain a world. Master finance, own your future."
 
+## 👥 Team Members
+
+- **Palisetty Sai Dinesh** 
+- **U Rahul Sai** 
+
 ## 🌟 Why Grotik?
 
 - **Learn While You Earn** - Master new languages while understanding real financial concepts
@@ -47,6 +52,29 @@ npm run dev
 
 # Ready for the world?
 npm run build
+```
+
+## 🔧 Project Setup
+
+### Prerequisites
+- Node.js 18+ installed
+- A Stellar testnet account
+- Groq API key for AI features
+
+### Environment Variables
+Create a `.env.local` file:
+```env
+GROQ_API_KEY=your_api_key
+STELLAR_NETWORK=testnet
+```
+
+### Development
+```bash
+# Install deps
+npm install
+
+# Run dev server
+npm run dev
 ```
 
 ## 🌈 Join The Journey

@@ -37,12 +37,13 @@
 	});
 
 	const { form: formData, enhance } = form;
-
+    let googleLoading = false;
+	let facebookLoading = false;
 	let loading = false;
 	let isFormLoading = false;
 
 	async function handleGoogleSignIn() {
-		loading = true;
+		googleLoading = true;
 		try {
 			const result = await signInWithGoogle();
 			if (!result.success) {
@@ -55,11 +56,11 @@
 				description: 'Failed to sign in with Google. Please try again.'
 			});
 		}
-		loading = false;
+		googleLoading = false;
 	}
 
 	async function handleFacebookSignIn() {
-		loading = true;
+		facebookLoading = true;
 		try {
 			const result = await signInWithFacebook();
 			if (!result.success) {
@@ -72,7 +73,7 @@
 				description: 'Failed to sign in with Facebook. Please try again.'
 			});
 		}
-		loading = false;
+		facebookLoading = false;
 	}
 </script>
 
@@ -119,7 +120,7 @@
 		</div>
 		<div class="flex flex-col gap-2">
 			<Button on:click={handleGoogleSignIn} variant="outline" disabled={loading}>
-				{#if loading}
+				{#if googleLoading}
 					<Loader class="mr-2 size-4 animate-spin" />
 				{:else}
 					<img src={GoogleSvg} alt="Google" class="mr-2 size-4" />
@@ -127,7 +128,7 @@
 				Google
 			</Button>
 			<Button on:click={handleFacebookSignIn} variant="outline" disabled={loading}>
-				{#if loading}
+				{#if facebookLoading}
 					<Loader class="mr-2 size-4 animate-spin" />
 				{:else}
 					<img src={FacebookLightSvg} alt="Facebook" class="mr-2 size-4 block dark:hidden" />

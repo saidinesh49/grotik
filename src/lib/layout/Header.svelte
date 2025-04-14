@@ -1,114 +1,130 @@
 <script lang="ts">
+	import { userStore, isAuthenticated } from '$lib/stores/auth';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import ThemeSwitcher from '$lib/components/ui/theme-switcher/ThemeSwitcher.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { LogOut, AlignJustify, XIcon } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
-	import { AlignJustify, XIcon } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
-	const menuItem = [
+	const menuItems = [
 		{
 			id: 1,
 			label: 'Features',
-			href: '#'
+			href: '/features'
 		},
 		{
 			id: 2,
 			label: 'Pricing',
-			href: '#'
+			href: '/pricing'
 		},
 		{
 			id: 3,
-			label: 'Careers',
-			href: '#'
-		},
-		{
-			id: 4,
-			label: 'Contact Us',
-			href: '#'
+			label: 'Contact',
+			href: '/contact'
 		}
 	];
 
 	let hamburgerMenuIsOpen = false;
+	let innerWidth = 0;
 
-	function toggleOverflowHidden(node: HTMLElement) {
-		node.addEventListener('click', () => {
-			hamburgerMenuIsOpen = !hamburgerMenuIsOpen;
+	// Redirect if user is authenticated and tries to access auth pages
+	$: if ($isAuthenticated && ($page.url.pathname === '/signin' || $page.url.pathname === '/signup')) {
+		goto('/dashboard');
+	}
+
+	function toggleMenu() {
+		hamburgerMenuIsOpen = !hamburgerMenuIsOpen;
+		const html = document.querySelector('html');
+		if (html) {
+			html.classList.toggle('overflow-hidden', hamburgerMenuIsOpen);
+		}
+	}
+
+	onMount(() => {
+		return () => {
 			const html = document.querySelector('html');
 			if (html) {
-				if (hamburgerMenuIsOpen) {
-					html.classList.add('overflow-hidden');
-				} else {
-					html.classList.remove('overflow-hidden');
-				}
+				html.classList.remove('overflow-hidden');
 			}
-		});
-	}
-	let innerWidth = 0;
+		};
+	});
 </script>
 
 <svelte:window bind:innerWidth />
-<header
-	class="fixed left-0 top-0 z-50 w-full -translate-y-4 animate-fade-in border-b opacity-0 backdrop-blur-md"
->
-	<!-- {#if innerWidth < 768} -->
-		<div class="container flex h-14 items-center justify-between">
-			<a class="text-md flex items-center" href="/"> Grotik </a>
 
-			<div class="ml-auto flex h-full items-center">
-				<a class="mr-6 text-sm" href="/signin"> Log in </a>
-				<Button variant="secondary" class="mr-6 text-sm" href="/signup">Sign up</Button>
-			</div>
-			<button class="ml-6 md:hidden" use:toggleOverflowHidden>
-				<span class="sr-only">Toggle menu</span>
-				{#if hamburgerMenuIsOpen}
-					<XIcon  strokeWidth={1.4} class='text-gray-300'/>
-				{:else}
-					<AlignJustify strokeWidth={1.4} class='text-gray-300' />
-				{/if}
-			</button>
-		</div>
-	<!-- {/if} -->
-</header>
-
-<nav
-	class={cn(
-		`fixed left-0 top-0 z-50 h-screen w-full overflow-auto `,
-		{
-			'pointer-events-none': !hamburgerMenuIsOpen
-		},
-		{
-			'bg-background/70 backdrop-blur-md': hamburgerMenuIsOpen
-		}
-	)}
->
-	{#if hamburgerMenuIsOpen === true}
-		<div class="container flex h-14 items-center justify-between">
-			<a class="text-md flex items-center" href="/"> Grotik </a>
-
-			<button class="md:hidden" use:toggleOverflowHidden>
-				<span class="sr-only">Toggle menu</span>
-				{#if hamburgerMenuIsOpen}
-					<XIcon strokeWidth={1.4} class='text-gray-300'/>
-				{:else}
-					<AlignJustify strokeWidth={1.4} class='text-gray-300'/>
-				{/if}
-			</button>
-		</div>
-		<ul
-			in:fly={{ y: -30, duration: 400 }}
-			class="flex flex-col uppercase ease-in md:flex-row md:items-center md:normal-case"
-		>
-			{#each menuItem as item, i}
-				<li class="border-grey-dark border-b py-0.5 pl-6 md:border-none">
+<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+	<div class="container flex h-16 items-center justify-between">
+		<div class="flex items-center gap-6">
+			<a href="/" class="flex items-center gap-2">
+				<span class="text-xl font-semibold">Grotik</span>
+			</a>
+			<nav class="hidden md:flex items-center gap-6">
+				{#each menuItems as item}
 					<a
-						class="hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-300 md:translate-y-0 md:text-sm md:transition-colors {hamburgerMenuIsOpen
-							? '[&_a]:translate-y-0'
-							: ''}"
 						href={item.href}
+						class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
 					>
 						{item.label}
 					</a>
-				</li>
+				{/each}
+			</nav>
+		</div>
+
+		<div class="flex items-center gap-4">
+			<ThemeSwitcher />
+			
+			{#if $isAuthenticated}
+				<Button
+					variant="ghost"
+					size="icon"
+					on:click={() => userStore.signOut()}
+					class="hover:bg-gray-100 dark:hover:bg-gray-800"
+				>
+					<LogOut class="size-5" />
+					<span class="sr-only">Sign out</span>
+				</Button>
+			{:else}
+				<div class="hidden md:flex items-center gap-2">
+					<Button variant="ghost" href="/signin">Sign In</Button>
+					<Button href="/signup">Sign Up</Button>
+				</div>
+				<button class="md:hidden" on:click={toggleMenu}>
+					<span class="sr-only">Toggle menu</span>
+					{#if hamburgerMenuIsOpen}
+						<XIcon strokeWidth={1.4} class="text-foreground"/>
+					{:else}
+						<AlignJustify strokeWidth={1.4} class="text-foreground" />
+					{/if}
+				</button>
+			{/if}
+		</div>
+	</div>
+</header>
+
+{#if hamburgerMenuIsOpen && !$isAuthenticated}
+	<nav class="fixed inset-0 z-40 bg-background/95 backdrop-blur md:hidden"
+		 in:fly={{ y: -30, duration: 400 }}>
+		<div class="container flex flex-col gap-6 pt-20">
+			{#each menuItems as item}
+				<a
+					href={item.href}
+					class="text-lg font-medium text-foreground"
+					on:click={toggleMenu}
+				>
+					{item.label}
+				</a>
 			{/each}
-		</ul>
-	{/if}
-</nav>
+			<div class="flex flex-col gap-2 pt-4 border-t">
+				<Button variant="ghost" href="/signin" class="w-full justify-center" on:click={toggleMenu}>
+					Sign In
+				</Button>
+				<Button href="/signup" class="w-full justify-center" on:click={toggleMenu}>
+					Sign Up
+				</Button>
+			</div>
+		</div>
+	</nav>
+{/if}

@@ -4,7 +4,31 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 
 ## [Unreleased]
 
+### Enhanced
+- Consistent layout structure across all pages
+- Dynamic header navigation based on auth state
+- Separate loading states for Google and Facebook auth
+- Server-side navigation handling
+- Footer component with links
+- Authentication flow with proper redirection
+- User state persistence across pages
+- Toast notifications for auth actions
+- Error handling for auth operations
+- Loading states for better UX
+- Added auth page protection to prevent authenticated users from accessing signin/signup pages
+- Improved mobile menu with better navigation structure
+- Consolidated navigation menu items
+- Cleaned up header component by removing duplicate code
+- Added proper cleanup for mobile menu overflow state
+- Added route-based header visibility control
+- Improved authentication pages by removing header for cleaner UI
+- Added support for future auth-related routes (reset password)
+- Optimized layout structure with conditional header rendering
+
 ### Fixed
+- Server-side navigation error in auth store
+- Duplicate header in dashboard page
+- Inconsistent layout structure
 - Fixed class name conflict in dropdown menu item component
 - Added missing favicon to prevent 404 errors
 - Dropdown menu builder prop handling
@@ -16,8 +40,22 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Theme persistence across page reloads
 - System theme synchronization
 - Dark mode color consistency in auth pages
+- Removed duplicate header component by consolidating into single location x2
+- Fixed theme switcher integration in header
+- Improved mobile responsiveness in header with proper hamburger menu
+- Enhanced header layout with proper authentication state handling
+- Optimized header component structure for better maintainability
 
 ### Added
+- Global layout component
+- Dynamic header navigation
+- Footer component
+- Dashboard page with user profile and menu grid
+- User state management with automatic navigation
+- Protected routes for authenticated users
+- User profile display with fallback avatar
+- Sign out functionality with toast notifications
+- Menu items for lessons, progress, goals, and settings
 - Dropdown menu component with full keyboard navigation
 - Theme switcher component with light/dark/system modes
 - Theme persistence using localStorage
@@ -70,4 +108,33 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 ### Added
 - Initial project setup
 - Installed all project dependencies
-- Started development server 
+- Started development server
+
+### Added
+- Theme switcher component for dark/light mode toggle
+- Firebase configuration and initialization
+- Google authentication integration
+- Facebook authentication integration
+- User authentication store
+- Protected routes implementation
+- Loading states for authentication
+- Error handling for auth operations
+- Responsive navigation components
+- Custom button components with variants
+- Animated shiny text component
+- Universal header component with authentication and theme controls
+- Clean layout structure with footer
+
+### Changed
+- Updated logo and branding elements
+- Improved button styles and hover states
+- Refactored header into a reusable component
+- Enhanced layout structure for better maintainability
+- Optimized authentication flow
+
+### Fixed
+- Duplicate header issue by implementing universal header component
+- Theme persistence across page reloads
+- Authentication state management
+- Mobile responsiveness issues
+- Navigation consistency across pages 

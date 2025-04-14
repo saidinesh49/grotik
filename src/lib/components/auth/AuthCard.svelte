@@ -44,7 +44,7 @@
         <div class="relative z-10">
             <AnimatedShinyText>
                 <h2 class="mb-6 text-center text-2xl font-semibold text-gray-900 dark:text-white">
-                    Welcome to LinguaFin
+                    Welcome to Grotik
                 </h2>
             </AnimatedShinyText>
             

@@ -59,17 +59,13 @@
 	<div class="container flex h-16 items-center justify-between">
 		<div class="flex items-center gap-6">
 			<a href="/" class="flex items-center gap-2">
+				<img src="/grotik_logo.png" alt="Grotik Logo" class="h-8 w-auto" />
 				<span class="text-xl font-semibold">Grotik</span>
 			</a>
 			<nav class="hidden md:flex items-center gap-6">
-				{#each menuItems as item}
-					<a
-						href={item.href}
-						class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-					>
-						{item.label}
-					</a>
-				{/each}
+				<a href="/features" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Features</a>
+				<a href="/lessons" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Lessons</a>
+				<a href="/about" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">About</a>
 			</nav>
 		</div>
 
@@ -77,15 +73,14 @@
 			<ThemeSwitcher />
 			
 			{#if $isAuthenticated}
-				<Button
-					variant="ghost"
-					size="icon"
-					on:click={() => userStore.signOut()}
-					class="hover:bg-gray-100 dark:hover:bg-gray-800"
-				>
-					<LogOut class="size-5" />
-					<span class="sr-only">Sign out</span>
-				</Button>
+<Button
+variant="ghost"
+on:click={() => userStore.signOut()}
+class="hover:bg-gray-100 dark:hover:bg-white-900 dark:hover:text-black flex items-center gap-2 border"
+>
+<LogOut class="size-5" />
+<span>Logout</span>
+</Button>
 			{:else}
 				<div class="hidden md:flex items-center gap-2">
 					<Button variant="ghost" href="/signin">Sign In</Button>
@@ -108,15 +103,9 @@
 	<nav class="fixed inset-0 z-40 bg-background/95 backdrop-blur md:hidden"
 		 in:fly={{ y: -30, duration: 400 }}>
 		<div class="container flex flex-col gap-6 pt-20">
-			{#each menuItems as item}
-				<a
-					href={item.href}
-					class="text-lg font-medium text-foreground"
-					on:click={toggleMenu}
-				>
-					{item.label}
-				</a>
-			{/each}
+			<a href="/features" class="text-lg font-medium" on:click={toggleMenu}>Features</a>
+			<a href="/lessons" class="text-lg font-medium" on:click={toggleMenu}>Lessons</a>
+			<a href="/about" class="text-lg font-medium" on:click={toggleMenu}>About</a>
 			<div class="flex flex-col gap-2 pt-4 border-t">
 				<Button variant="ghost" href="/signin" class="w-full justify-center" on:click={toggleMenu}>
 					Sign In

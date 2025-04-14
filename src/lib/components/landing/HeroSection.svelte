@@ -7,6 +7,7 @@
 	import AuthCard from '$lib/components/auth/AuthCard.svelte';
 	import type { ObserverEventDetails } from 'svelte-inview';
 	import { inview } from 'svelte-inview';
+	import { goto } from '$app/navigation';
 
 	// Images
 	import HeroDarkImg from '$lib/imgs/hero-dark.png';
@@ -59,7 +60,7 @@
 	</p>
 	<div class="flex justify-center gap-4">
 		<Button
-			on:click={openAuthModal}
+			on:click={()=>{goto('/signup')}}
 			class="-translate-y-4 animate-fade-in gap-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white opacity-0 ease-in-out hover:from-blue-700 hover:to-indigo-700 [--animation-delay:600ms] dark:text-white"
 		>
 			<span>Start Learning Now</span>

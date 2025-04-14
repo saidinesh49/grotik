@@ -25,16 +25,4 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-border/40 py-6">
-        <div class="container flex items-center justify-between">
-            <p class="text-sm text-muted-foreground">
-                © 2024 Grotik. All rights reserved.
-            </p>
-            <nav class="flex gap-4">
-                <a href="/privacy" class="text-sm text-muted-foreground hover:text-foreground">Privacy</a>
-                <a href="/terms" class="text-sm text-muted-foreground hover:text-foreground">Terms</a>
-                <a href="/contact" class="text-sm text-muted-foreground hover:text-foreground">Contact</a>
-            </nav>
-        </div>
-    </footer>
 </div>

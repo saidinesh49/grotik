@@ -1,79 +1,54 @@
 <script lang="ts">
 	import { LoaderIcon, CheckIcon } from 'lucide-svelte';
-	import Switch from '$lib/components/ui/switch/switch.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { cn } from '$lib/utils';
 	import { fly } from 'svelte/transition';
 
-	type Interval = 'month' | 'year';
-
-	export function toHumanPrice(price: number, decimals: number = 2) {
-		return Number(price / 100).toFixed(decimals);
-	}
 	let productPrices = [
 		{
-			id: 'price_1',
-			name: 'Basic',
-			description: 'A basic plan for startups and individual users',
+			id: 'beginner',
+			name: 'Self-Paced Learning',
+			description: 'Perfect for beginners starting their financial journey',
 			features: [
-				'AI-powered analytics',
-				'Basic support',
-				'5 projects limit',
-				'Access to basic AI tools'
+				'Core financial lessons',
+				'Basic budgeting tools',
+				'5 language options',
+				'Community support'
 			],
-			monthlyPrice: 1000,
-			yearlyPrice: 10000,
+			price: 'Free',
 			isMostPopular: false
 		},
 		{
-			id: 'price_2',
-			name: 'Premium',
-			description: 'A premium plan for growing businesses',
+			id: 'guided',
+			name: 'Guided Learning',
+			description: 'For dedicated learners seeking comprehensive knowledge',
 			features: [
-				'Advanced AI insights',
-				'Priority support',
-				'Unlimited projects',
-				'Access to all AI tools',
-				'Custom integrations'
+				'Advanced financial concepts',
+				'Personal finance tools',
+				'All language options',
+				'1-on-1 mentoring sessions',
+				'Progress tracking'
 			],
-			monthlyPrice: 2000,
-			yearlyPrice: 20000,
+			price: 'Coming Soon',
 			isMostPopular: true
 		},
 		{
-			id: 'price_5',
-			name: 'Enterprise',
-			description: 'An enterprise plan with advanced features for large organizations',
+			id: 'family',
+			name: 'Family Learning',
+			description: 'Share financial education with your whole family',
 			features: [
-				'Custom AI solutions',
-				'24/7 dedicated support',
-				'Unlimited projects',
-				'Access to all AI tools',
-				'Custom integrations',
-				'Data security and compliance'
+				'Up to 5 family accounts',
+				'Family progress dashboard',
+				'All premium features',
+				'Custom learning paths',
+				'Family finance tools',
+				'Group mentoring sessions'
 			],
-			monthlyPrice: 5000,
-			yearlyPrice: 50000,
-			isMostPopular: false
-		},
-		{
-			id: 'price_6',
-			name: 'Ultimate',
-			description: 'The ultimate plan with all features for industry leaders',
-			features: [
-				'Bespoke AI development',
-				'White-glove support',
-				'Unlimited projects',
-				'Priority access to new AI tools',
-				'Custom integrations',
-				'Highest data security and compliance'
-			],
-			monthlyPrice: 8000,
-			yearlyPrice: 80000,
+			price: 'Coming Soon',
 			isMostPopular: false
 		}
 	];
-	let interval: Interval = 'month';
+
 	let isLoading = false;
 	let index = '';
 	let onSubscribeClick = async (priceId: string) => {
@@ -83,48 +58,24 @@
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		isLoading = false;
 	};
-	/*
-    onCheckedChange={(checked) => {
-                setInterval(checked ? 'year' : 'month')
-             }}
-     */
 </script>
 
 <section id="pricing">
 	<div class="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 py-14 md:px-8">
 		<div class="mx-auto max-w-5xl text-center">
-			<h4 class="text-xl font-bold tracking-tight text-black dark:text-white">Pricing</h4>
+			<h4 class="text-xl font-bold tracking-tight text-black dark:text-white">Learning Paths</h4>
 
 			<h2 class="text-5xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-				Simple pricing for everyone.
+				Choose Your Financial Journey
 			</h2>
 
 			<p class="mt-6 text-xl leading-8 text-black/80 dark:text-white">
-				Choose an
-				{' '}
-				<strong>affordable plan</strong>
-				{' '}
-				that&apos;s packed with the best features for engaging your audience, creating customer loyalty,
-				and driving sales.
+				Select a learning path that matches your goals. Start your journey to financial literacy with
+				personalized guidance and support.
 			</p>
 		</div>
 
-		<div class="flex w-full items-center justify-center space-x-2">
-			<Switch
-				on:click={() => {
-					interval = interval === 'month' ? 'year' : 'month';
-				}}
-				id="interval"
-			/>
-			<span>Annual</span>
-			<span
-				class="inline-block whitespace-nowrap rounded-full bg-black px-2.5 py-1 text-[11px] font-semibold uppercase leading-5 tracking-wide text-white dark:bg-white dark:text-black"
-			>
-				2 MONTHS FREE ✨
-			</span>
-		</div>
-
-		<div class="mx-auto grid w-full flex-col justify-center gap-4 sm:grid-cols-2 lg:grid-cols-4">
+		<div class="mx-auto grid w-full flex-col justify-center gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each productPrices as price, id}
 				<div
 					class={cn(
@@ -145,20 +96,11 @@
 							</p>
 						</div>
 					</div>
-					{#key interval}
-						<div in:fly={{ y: 20, duration: 300, delay: id * 40 }} class="flex flex-row gap-1">
-							<span class="text-4xl font-bold text-black dark:text-white">
-								{#if interval === 'month'}
-									${toHumanPrice(price.monthlyPrice, 0)}
-								{:else}
-									${toHumanPrice(price.yearlyPrice, 0)}
-								{/if}
-								<span class="text-xs">
-									/ {interval}
-								</span>
-							</span>
-						</div>
-					{/key}
+					<div class="flex flex-row gap-1">
+						<span class="text-4xl font-bold text-black dark:text-white">
+							{price.price}
+						</span>
+					</div>
 					<Button
 						class={cn(
 							'group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter',
@@ -172,9 +114,9 @@
 						/>
 						{#if isLoading && index === price.id}
 							<LoaderIcon class="mr-2 size-4 animate-spin" />
-							Subscribing
+							Loading...
 						{:else if !isLoading || (isLoading && index !== price.id)}
-							Subscribe
+							{price.id === 'beginner' ? 'Start Learning' : 'Join Waitlist'}
 						{/if}
 					</Button>
 

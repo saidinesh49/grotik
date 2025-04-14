@@ -24,6 +24,11 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Improved authentication pages by removing header for cleaner UI
 - Added support for future auth-related routes (reset password)
 - Optimized layout structure with conditional header rendering
+- Added Grotik logo to header
+- Simplified pricing structure with learning paths
+- Removed subscription model in favor of educational focus
+- Updated navigation menu with relevant links
+- Improved header mobile responsiveness
 
 ### Fixed
 - Server-side navigation error in auth store
@@ -45,6 +50,10 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Improved mobile responsiveness in header with proper hamburger menu
 - Enhanced header layout with proper authentication state handling
 - Optimized header component structure for better maintainability
+- Replaced missing SVG files with Lucide icons in client section
+- Improved dark mode support in client section
+- Enhanced client section visual hierarchy with labels
+- Added proper color contrast for accessibility
 
 ### Added
 - Global layout component
@@ -79,6 +88,15 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Optimized theme persistence and state management
 - Added proper cleanup for theme-related event listeners
 - Improved theme transition handling with better performance
+- Updated CTA section text to focus on financial literacy journey
+- Revised pricing plans to match educational focus
+- Changed client section to show financial institutions
+- Updated pricing descriptions and features for financial education
+- Adjusted marketing copy to emphasize learning in multiple languages
+- Replaced monthly/annual pricing with learning path categories
+- Updated pricing section to focus on educational journey
+- Changed subscription buttons to learning-focused CTAs
+- Added waitlist functionality for upcoming features
 
 ### Added
 - Google authentication integration

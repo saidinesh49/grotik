@@ -9,6 +9,10 @@
 	"aliases": {
 		"components": "$lib/components",
 		"utils": "$lib/utils"
+		},
+	"alias":{
+		"$public/": "./public/",
+		"$public/*": "./public/*"
 	},
 	"typescript": true
 }

@@ -1,113 +1,105 @@
 <script>
-	import DiscordSvg from '$lib/imgs/discord.svg';
-	import TwitterSvg from '$lib/imgs/x.svg';
+	import { Brain, Coins, BookOpen, MessageCircle, Globe, HeartHandshake, ArrowRight } from 'lucide-svelte';
 
-	const footerNavs = [
-		{
-			label: 'Product',
-			items: [
-				{
-					href: '/',
-					name: 'Email Collection'
-				},
-				{
-					href: '/pricing',
-					name: 'Pricing'
-				},
-				{
-					href: '/faq',
-					name: 'FAQ'
-				}
-			]
-		},
+	const currentYear = new Date().getFullYear();
 
+	const footerLinks = [
 		{
-			label: 'Community',
+			label: 'Platform',
 			items: [
-				{
-					href: '/',
-					name: 'Discord'
-				},
-				{
-					href: '/',
-					name: 'Twitter'
-				},
-				{
-					href: 'mailto:hello@chatcollect.com',
-					name: 'Email'
-				}
+				{ href: '/features', name: 'Features' },
+				{ href: '/pricing', name: 'Pricing' },
+				{ href: '/help', name: 'Help Center' }
 			]
 		},
 		{
-			label: 'Legal',
+			label: 'Resources',
 			items: [
-				{
-					href: '/terms',
-					name: 'Terms'
-				},
-
-				{
-					href: '/privacy',
-					name: 'Privacy'
-				}
+				{ href: '/blog', name: 'Blog' },
+				{ href: '/documentation', name: 'Documentation' },
+				{ href: '/roadmap', name: 'Roadmap' }
+			]
+		},
+		{
+			label: 'Company',
+			items: [
+				{ href: '/about', name: 'About' },
+				{ href: '/privacy', name: 'Privacy' },
+				{ href: '/terms', name: 'Terms' }
 			]
 		}
 	];
 
-	const footerSocials = [
+	const technologies = [
 		{
-			href: '',
-			name: 'Discord',
-			icon: DiscordSvg
+			name: 'Groq AI',
+			icon: Brain,
+			url: 'https://groq.com',
+			description: 'Ultra-fast language processing'
 		},
 		{
-			href: '',
-			name: 'Twitter',
-			icon: TwitterSvg
+			name: 'Stellar',
+			icon: Coins,
+			url: 'https://stellar.org',
+			description: 'Blockchain payment infrastructure'
 		}
 	];
 </script>
 
-<footer>
-	<div class="mx-auto w-full max-w-screen-xl xl:pb-2">
-		<div class="gap-4 p-4 px-8 py-16 sm:pb-16 md:flex md:justify-between">
-			<div class="mb-12 flex flex-col gap-4">
+<footer class="border-t border-black/10 bg-white dark:border-white/10 dark:bg-black/20">
+	<div class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+		<div class="flex flex-col justify-between gap-10 md:flex-row">
+			<!-- Brand Column -->
+			<div class="max-w-xs">
 				<a href="/" class="flex items-center gap-2">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="lucide lucide-floor-plan size-8"
-						><path
-							d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"
-						/><path d="M9 3v7" /><path d="M21 10h-7" /><path d="M3 15h9" /></svg
-					>
-					<span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
-						Grotik
-					</span>
+					<div class="flex size-10 items-center justify-center rounded-full border-2 border-black bg-white dark:border-white dark:bg-black">
+						<HeartHandshake class="size-5 text-black dark:text-white" />
+					</div>
+					<span class="text-xl font-semibold text-black dark:text-white">Grotik</span>
 				</a>
-				<p class="max-w-xs">UI Library for Design Engineers</p>
+				<p class="mt-4 text-sm text-black/70 dark:text-white/70">
+					Breaking language barriers in financial education with AI-powered learning and blockchain technology.
+				</p>
+				
+				<div class="mt-8">
+					<h3 class="mb-4 text-xs font-semibold uppercase tracking-wider text-black/60 dark:text-white/60">
+						Powered by
+					</h3>
+					<div class="space-y-4">
+						{#each technologies as tech}
+							<a 
+								href={tech.url}
+								target="_blank" 
+								rel="noopener noreferrer"
+								class="flex items-center gap-3 rounded-lg border border-black/10 px-4 py-3 transition-all duration-300 hover:border-black/30 hover:shadow-sm dark:border-white/10 dark:hover:border-white/30"
+							>
+								<div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-black text-white dark:bg-white dark:text-black">
+									<svelte:component this={tech.icon} class="size-4" />
+								</div>
+								<div>
+									<p class="text-sm font-medium text-black dark:text-white">{tech.name}</p>
+									<p class="text-xs text-black/60 dark:text-white/60">{tech.description}</p>
+								</div>
+								<ArrowRight class="ml-auto size-3 text-black/40 dark:text-white/40" />
+							</a>
+						{/each}
+					</div>
+				</div>
 			</div>
-			<div class="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
-				{#each footerNavs as nav}
+			
+			<!-- Links Columns -->
+			<div class="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10">
+				{#each footerLinks as section}
 					<div>
-						<h2
-							class="mb-6 text-sm font-medium uppercase tracking-tighter text-gray-900 dark:text-white"
-						>
-							{nav.label}
-						</h2>
-						<ul class="grid gap-2">
-							{#each nav.items as item}
+						<h3 class="mb-4 text-xs font-semibold uppercase tracking-wider text-black/60 dark:text-white/60">
+							{section.label}
+						</h3>
+						<ul class="space-y-2">
+							{#each section.items as item}
 								<li>
 									<a
 										href={item.href}
-										class="cursor-pointer text-sm font-[450] text-gray-400 duration-200 hover:text-gray-200"
+										class="text-sm font-medium text-black/80 transition-colors duration-200 hover:text-black dark:text-white/80 dark:hover:text-white"
 									>
 										{item.name}
 									</a>
@@ -118,30 +110,16 @@
 				{/each}
 			</div>
 		</div>
-
-		<div
-			class="flex flex-col gap-2 rounded-md border-neutral-700/20 px-8 py-4 sm:flex sm:flex-row sm:items-center sm:justify-between"
-		>
-			<div class="flex items-center space-x-5 sm:mt-0 sm:justify-center">
-				{#each footerSocials as social}
-					<a
-						href={social.href}
-						class="fill-gray-500 text-gray-500 hover:fill-gray-900 hover:text-gray-900 dark:hover:fill-gray-600 dark:hover:text-gray-600"
-					>
-						<img src={social.icon} class="size-4" alt={social.name} />
-						<span class="sr-only">{social.name}</span>
-					</a>
-				{/each}
+		
+		<div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-6 dark:border-white/10 md:flex-row">
+			<p class="text-xs text-black/60 dark:text-white/60">
+				© {currentYear} Grotik. All rights reserved.
+			</p>
+			<div class="flex items-center gap-6">
+				<a href="/privacy" class="text-xs font-medium text-black/80 hover:text-black dark:text-white/80 dark:hover:text-white">Privacy</a>
+				<a href="/terms" class="text-xs font-medium text-black/80 hover:text-black dark:text-white/80 dark:hover:text-white">Terms</a>
+				<a href="/contact" class="text-xs font-medium text-black/80 hover:text-black dark:text-white/80 dark:hover:text-white">Contact</a>
 			</div>
-			<span class="text-sm text-gray-500 dark:text-gray-400 sm:text-center">
-				Copyright ©
-				{' '}
-				{new Date().getFullYear()}
-				{' '}
-				<a href="/" class="cursor-pointer">Grotik</a>
-				. All Rights Reserved.
-			</span>
 		</div>
 	</div>
-	<!-- Site Banner -->
 </footer>

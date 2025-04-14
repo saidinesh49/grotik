@@ -3,8 +3,10 @@
 	import FacebookLightSvg from '$lib/imgs/facebook-light.svg';
 	import FacebookDarkSvg from '$lib/imgs/facebook-dark.svg';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ChevronLeftIcon } from 'lucide-svelte';
+	import { ChevronLeftIcon, HeartHandshake } from 'lucide-svelte';
 	import { signInWithGoogle, signInWithFacebook } from '$lib/stores/auth';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -16,31 +18,39 @@
 
 	export let data;
 	let dataForm: SuperValidated<Infer<FormSchema>> = data.form;
-	let form = superForm(dataForm, {
-		validators: zodClient(formSchema),
-		onSubmit: () => {
-			isFormLoading = true;
-		},
-		onUpdate: ({ result }) => {
-			isFormLoading = false;
-			if (result.status === 200) {
-				toast.success('Check your email', {
-					description: 'We have sent you a login link. Be sure to check your spam too.'
-				});
-			} else {
-				toast.error('Something went wrong', {
-					description: 'Your sign in request failed. Please try again.'
-				});
-			}
-		}
-	});
-
-	const { form: formData, enhance } = form;
-
+	let form;
+	let emailValue = '';
+	let enhanceFunction: any;
+	
 	let googleLoading = false;
 	let facebookLoading = false;
 	let loading = false;
 	let isFormLoading = false;
+
+	onMount(() => {
+		if (browser) {
+			form = superForm(dataForm, {
+				validators: zodClient(formSchema),
+				onSubmit: () => {
+					isFormLoading = true;
+				},
+				onUpdate: ({ result }) => {
+					isFormLoading = false;
+					if (result.status === 200) {
+						toast.success('Check your email', {
+							description: 'We have sent you a login link. Be sure to check your spam too.'
+						});
+					} else {
+						toast.error('Something went wrong', {
+							description: 'Your sign in request failed. Please try again.'
+						});
+					}
+				}
+			});
+			
+			enhanceFunction = form.enhance;
+		}
+	});
 
 	async function handleGoogleSignIn() {
 		googleLoading = true;
@@ -89,37 +99,48 @@
 	</Button>
 	<div class="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
 		<div class="flex flex-col gap-2 text-center">
-			<!-- {/* <Icons.logo class="mx-auto h-6 w-6" /> */} -->
-			<h1 class="text-2xl font-semibold tracking-tight">Welcome to Grotik</h1>
-			<p class="text-sm text-muted-foreground">Sign up for an account</p>
+			<div class="mx-auto flex size-10 items-center justify-center rounded-full border-2 border-black bg-white dark:border-white dark:bg-black">
+				<HeartHandshake class="size-5 text-black dark:text-white" />
+			</div>
+			<h1 class="text-2xl font-semibold tracking-tight text-black dark:text-white">Welcome to Grotik</h1>
+			<p class="text-sm text-black/60 dark:text-white/60">Sign up for an account</p>
 		</div>
 		<!-- Form -->
-		<form method="POST" use:enhance>
-			<Form.Field {form} name="email" class="mb-4">
-				<Form.Control let:attrs>
-					<Input placeholder="name@example.com" {...attrs} bind:value={$formData.email} />
-				</Form.Control>
-				<!-- <Form.Description>This is your email address.</Form.Description> -->
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Button size="sm" class="w-full" disabled={isFormLoading}>
-				{#if isFormLoading}
-					<Loader class="mr-2 size-4 animate-spin" />
-				{/if}
-				Sign Up with Email</Form.Button
-			>
+		<form method="POST" use:enhanceFunction>
+			{#if browser && form}
+				<div class="mb-4">
+					<Form.Field {form} name="email">
+						<Form.Control let:attrs>
+							<Input placeholder="name@example.com" {...attrs} class="rounded-full" />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
+				<Form.Button size="sm" class="w-full rounded-full" disabled={isFormLoading}>
+					{#if isFormLoading}
+						<Loader class="mr-2 size-4 animate-spin" />
+					{/if}
+					Sign Up with Email
+				</Form.Button>
+			{:else}
+				<!-- Fallback when form is not yet initialized -->
+				<div class="mb-4">
+					<Input placeholder="name@example.com" class="rounded-full" bind:value={emailValue} />
+				</div>
+				<Button size="sm" class="w-full rounded-full">Sign Up with Email</Button>
+			{/if}
 		</form>
 		<!-- Separator -->
 		<div class="relative">
 			<div class="absolute inset-0 flex items-center">
-				<span class="w-full border-t" />
+				<span class="w-full border-t border-black/10 dark:border-white/10" />
 			</div>
 			<div class="relative flex justify-center text-xs uppercase">
-				<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
+				<span class="bg-background px-2 text-black/60 dark:text-white/60"> Or continue with </span>
 			</div>
 		</div>
 		<div class="flex flex-col gap-2">
-			<Button on:click={handleGoogleSignIn} variant="outline" disabled={loading}>
+			<Button on:click={handleGoogleSignIn} variant="outline" class="rounded-full border-black/10 dark:border-white/10" disabled={loading}>
 				{#if googleLoading}
 					<Loader class="mr-2 size-4 animate-spin" />
 				{:else}
@@ -127,7 +148,7 @@
 				{/if}
 				Google
 			</Button>
-			<Button on:click={handleFacebookSignIn} variant="outline" disabled={loading}>
+			<Button on:click={handleFacebookSignIn} variant="outline" class="rounded-full border-black/10 dark:border-white/10" disabled={loading}>
 				{#if facebookLoading}
 					<Loader class="mr-2 size-4 animate-spin" />
 				{:else}
@@ -138,8 +159,8 @@
 			</Button>
 		</div>
 
-		<p class="px-8 text-center text-sm text-muted-foreground">
-			<a href="/signin" class="hover:text-brand underline underline-offset-4">
+		<p class="px-8 text-center text-sm text-black/60 dark:text-white/60">
+			<a href="/signin" class="underline underline-offset-4 hover:text-black dark:hover:text-white">
 				Already have an account? Sign In
 			</a>
 		</p>

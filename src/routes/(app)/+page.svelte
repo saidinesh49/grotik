@@ -1,10 +1,10 @@
 <script>
 	import { seo } from '$lib';
-	import ClientSection from '$lib/components/landing/ClientSection.svelte';
-	import CtaSection from '$lib/components/landing/CtaSection.svelte';
 	import HeroSection from '$lib/components/landing/HeroSection.svelte';
-	import PricingSection from '$lib/components/landing/PricingSection.svelte';
-	import SphereMask from '$lib/components/magic/SphereMask/SphereMask.svelte';
+	import FeatureSection from '$lib/components/landing/FeatureSection.svelte';
+	import HowItWorksSection from '$lib/components/landing/HowItWorksSection.svelte';
+	import DemoSection from '$lib/components/landing/DemoSection.svelte';
+	import CtaSection from '$lib/components/landing/CtaSection.svelte';
 </script>
 
 <svelte:head>
@@ -25,7 +25,7 @@
 	<meta name="twitter:site" content="@Sikandar_Bhide" />
 </svelte:head>
 <HeroSection />
-<ClientSection />
-<SphereMask />
-<PricingSection />
+<FeatureSection />
+<HowItWorksSection />
+<DemoSection />
 <CtaSection />

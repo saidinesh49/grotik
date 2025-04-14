@@ -33,11 +33,11 @@
 		on:inview_change={handleChange}
 		use:motion
 		class={cn(
-			'relative size-20 cursor-pointer overflow-hidden rounded-2xl border p-4',
+			'relative size-24 m-3 cursor-pointer overflow-hidden rounded-2xl p-4',
 			// light styles
-			'bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
+			'bg-white/80 backdrop-blur-sm [box-shadow:0_8px_16px_rgba(0,0,0,.08)]',
 			// dark styles
-			'transform-gpu dark:bg-transparent dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]'
+			'transform-gpu dark:bg-black/50 dark:backdrop-blur-sm dark:[box-shadow:0_8px_16px_rgba(0,0,0,.2)]'
 		)}
 	>
 		<slot></slot>

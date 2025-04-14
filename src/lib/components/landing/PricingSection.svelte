@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { cn } from '$lib/utils';
 	import { fly } from 'svelte/transition';
+	import ShinyHeading from '$lib/components/ui/heading/ShinyHeading.svelte';
 
 	type Interval = 'month' | 'year';
 
@@ -13,63 +14,31 @@
 	let productPrices = [
 		{
 			id: 'price_1',
-			name: 'Basic',
-			description: 'A basic plan for startups and individual users',
+			name: 'Free Beta',
+			description: 'Try our platform during beta',
 			features: [
-				'AI-powered analytics',
-				'Basic support',
-				'5 projects limit',
-				'Access to basic AI tools'
+				'Basic financial vocabulary',
+				'Language learning exercises',
+				'Demo wallet simulation',
+				'Community access'
 			],
-			monthlyPrice: 1000,
-			yearlyPrice: 10000,
-			isMostPopular: false
-		},
-		{
-			id: 'price_2',
-			name: 'Premium',
-			description: 'A premium plan for growing businesses',
-			features: [
-				'Advanced AI insights',
-				'Priority support',
-				'Unlimited projects',
-				'Access to all AI tools',
-				'Custom integrations'
-			],
-			monthlyPrice: 2000,
-			yearlyPrice: 20000,
+			monthlyPrice: 0,
+			yearlyPrice: 0,
 			isMostPopular: true
 		},
 		{
-			id: 'price_5',
-			name: 'Enterprise',
-			description: 'An enterprise plan with advanced features for large organizations',
+			id: 'price_2',
+			name: 'Early Access',
+			description: 'Full access to all features',
 			features: [
-				'Custom AI solutions',
-				'24/7 dedicated support',
-				'Unlimited projects',
-				'Access to all AI tools',
-				'Custom integrations',
-				'Data security and compliance'
+				'Everything in Free tier',
+				'Full AI conversation practice',
+				'Stellar testnet integration',
+				'Advanced financial lessons',
+				'Early access to new features'
 			],
-			monthlyPrice: 5000,
-			yearlyPrice: 50000,
-			isMostPopular: false
-		},
-		{
-			id: 'price_6',
-			name: 'Ultimate',
-			description: 'The ultimate plan with all features for industry leaders',
-			features: [
-				'Bespoke AI development',
-				'White-glove support',
-				'Unlimited projects',
-				'Priority access to new AI tools',
-				'Custom integrations',
-				'Highest data security and compliance'
-			],
-			monthlyPrice: 8000,
-			yearlyPrice: 80000,
+			monthlyPrice: 499,
+			yearlyPrice: 4990,
 			isMostPopular: false
 		}
 	];
@@ -93,11 +62,11 @@
 <section id="pricing">
 	<div class="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 py-14 md:px-8">
 		<div class="mx-auto max-w-5xl text-center">
-			<h4 class="text-xl font-bold tracking-tight text-black dark:text-white">Pricing</h4>
+			<p class="text-base font-semibold leading-7 text-black/60 dark:text-white/60">Early Access Pricing</p>
 
-			<h2 class="text-5xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-				Simple pricing for everyone.
-			</h2>
+			<ShinyHeading size="xl" className="mt-2">
+				Join our beta program
+			</ShinyHeading>
 
 			<p class="mt-6 text-xl leading-8 text-black/80 dark:text-white">
 				Choose an

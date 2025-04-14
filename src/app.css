@@ -36,15 +36,12 @@
 
       /* Custom properties */
       --navigation-height: 3.5rem;
-      --color-one: #ffbd7a;
-      --color-two: #fe8bbb;
-      --color-three: #9e7aff;
-
-      /*
-    --color-one: #37ecba;
-    --color-two: #72afd3;
-    --color-three: #ff2e63;
-     */
+      --color-one: #F5F5F5;
+      --color-two: #E0E0E0;
+      --color-three: #D0D0D0;
+      --color-skin-light: #FFDFC4;
+      --color-skin-medium: #F5D7B2;
+      --color-skin-dark: #EBC8A0;
    }
 
    .dark {
@@ -76,11 +73,14 @@
       --input: 0 0% 14.9%;
       --ring: 0 0% 83.1%;
 
-         /* Custom properties */
-         --navigation-height: 3.5rem;
-         --color-one: #ffbd7a;
-         --color-two: #fe8bbb;
-         --color-three: #9e7aff;
+      /* Custom properties */
+      --navigation-height: 3.5rem;
+      --color-one: #1A1A1A;
+      --color-two: #2A2A2A;
+      --color-three: #3A3A3A;
+      --color-skin-light: #FFDFC4;
+      --color-skin-medium: #F5D7B2;
+      --color-skin-dark: #EBC8A0;
    }
 }
 
@@ -91,4 +91,20 @@
    body {
       @apply bg-background text-foreground;
    }
+}
+
+.pill-button {
+   @apply rounded-full px-6 py-2 font-medium transition-all duration-300;
+}
+
+.pill-button-primary {
+   @apply bg-black text-white border-2 border-black hover:bg-black/90 dark:bg-white dark:text-black dark:border-white dark:hover:bg-white/90;
+}
+
+.pill-button-secondary {
+   @apply bg-transparent text-black border-2 border-black/20 hover:bg-black/5 dark:text-white dark:border-white/20 dark:hover:bg-white/5;
+}
+
+.card-hover {
+   @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
 }

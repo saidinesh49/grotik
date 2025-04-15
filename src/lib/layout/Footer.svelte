@@ -92,7 +92,7 @@
 								<li>
 									<a
 										href={item.href}
-										class="cursor-pointer text-sm font-[450] text-gray-400 duration-200 hover:text-gray-200"
+										class="cursor-pointer text-sm font-[450] text-gray-400 duration-200 hover:text-gray-800 dark:hover:text-gray-100"
 									>
 										{item.name}
 									</a>

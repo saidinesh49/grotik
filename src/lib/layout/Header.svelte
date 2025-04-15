@@ -82,7 +82,7 @@
 				<Button
 					variant="ghost"
 					on:click={() => userStore.signOut()}
-					class="hidden md:flex hover:bg-gray-100 dark:hover:bg-gray-800 items-center gap-2"
+					class="hidden md:flex hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black items-center gap-2 border"
 				>
 					<LogOut class="size-5" />
 					<span>Logout</span>
@@ -133,7 +133,7 @@
 							userStore.signOut();
 							toggleMenu();
 						}}
-						class="w-full justify-center gap-2"
+						class="w-full justify-center gap-2 hover:text-white hover:bg-black border dark:hover:bg-white dark:hover:text-black"
 					>
 						<LogOut class="size-5" />
 						<span>Logout</span>

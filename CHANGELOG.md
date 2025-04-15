@@ -63,6 +63,10 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Hamburger menu auth state handling
 - Mobile navigation consistency across auth states
 - Desktop/mobile navigation state separation
+- Improved theme switcher visibility with proper container styling
+- Enhanced theme switcher contrast with border and background
+- Maintained consistent theme switcher position in header
+- Fixed theme switcher accessibility and interaction area
 
 ### Added
 - Global layout component

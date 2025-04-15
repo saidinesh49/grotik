@@ -29,6 +29,11 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Removed subscription model in favor of educational focus
 - Updated navigation menu with relevant links
 - Improved header mobile responsiveness
+- Improved mobile navigation with proper auth state handling
+- Added consistent hamburger menu behavior for all screen sizes
+- Enhanced mobile menu with proper auth-based actions
+- Optimized header component for better mobile UX
+- Improved navigation menu structure with DRY code
 
 ### Fixed
 - Server-side navigation error in auth store
@@ -54,6 +59,10 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Improved dark mode support in client section
 - Enhanced client section visual hierarchy with labels
 - Added proper color contrast for accessibility
+- Mobile menu visibility logic for authenticated users
+- Hamburger menu auth state handling
+- Mobile navigation consistency across auth states
+- Desktop/mobile navigation state separation
 
 ### Added
 - Global layout component

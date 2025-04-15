@@ -17,13 +17,13 @@
 		},
 		{
 			id: 2,
-			label: 'Pricing',
-			href: '/pricing'
+			label: 'Lessons',
+			href: '/lessons'
 		},
 		{
 			id: 3,
-			label: 'Contact',
-			href: '/contact'
+			label: 'About',
+			href: '/about'
 		}
 	];
 
@@ -63,9 +63,14 @@
 				<span class="text-xl font-semibold">Grotik</span>
 			</a>
 			<nav class="hidden md:flex items-center gap-6">
-				<a href="/features" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Features</a>
-				<a href="/lessons" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Lessons</a>
-				<a href="/about" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">About</a>
+				{#each menuItems as item}
+					<a
+						href={item.href}
+						class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+					>
+						{item.label}
+					</a>
+				{/each}
 			</nav>
 		</div>
 
@@ -73,46 +78,74 @@
 			<ThemeSwitcher />
 			
 			{#if $isAuthenticated}
-<Button
-variant="ghost"
-on:click={() => userStore.signOut()}
-class="hover:bg-gray-100 dark:hover:bg-white-900 dark:hover:text-black flex items-center gap-2 border"
->
-<LogOut class="size-5" />
-<span>Logout</span>
-</Button>
-			{:else}
+				<!-- Show Logout button only on desktop -->
+				<Button
+					variant="ghost"
+					on:click={() => userStore.signOut()}
+					class="hidden md:flex hover:bg-gray-100 dark:hover:bg-gray-800 items-center gap-2"
+				>
+					<LogOut class="size-5" />
+					<span>Logout</span>
+				</Button>
+			{/if}
+			
+			<!-- Show hamburger on mobile regardless of auth state -->
+			<button class="md:hidden" on:click={toggleMenu}>
+				<span class="sr-only">Toggle menu</span>
+				{#if hamburgerMenuIsOpen}
+					<XIcon strokeWidth={1.4} class="text-foreground"/>
+				{:else}
+					<AlignJustify strokeWidth={1.4} class="text-foreground" />
+				{/if}
+			</button>
+
+			<!-- Show Sign In/Sign Up only on desktop when not authenticated -->
+			{#if !$isAuthenticated}
 				<div class="hidden md:flex items-center gap-2">
 					<Button variant="ghost" href="/signin">Sign In</Button>
 					<Button href="/signup">Sign Up</Button>
 				</div>
-				<button class="md:hidden" on:click={toggleMenu}>
-					<span class="sr-only">Toggle menu</span>
-					{#if hamburgerMenuIsOpen}
-						<XIcon strokeWidth={1.4} class="text-foreground"/>
-					{:else}
-						<AlignJustify strokeWidth={1.4} class="text-foreground" />
-					{/if}
-				</button>
 			{/if}
 		</div>
 	</div>
 </header>
 
-{#if hamburgerMenuIsOpen && !$isAuthenticated}
+<!-- Mobile menu for both authenticated and unauthenticated users -->
+{#if hamburgerMenuIsOpen}
 	<nav class="fixed inset-0 z-40 bg-background/95 backdrop-blur md:hidden"
 		 in:fly={{ y: -30, duration: 400 }}>
 		<div class="container flex flex-col gap-6 pt-20">
-			<a href="/features" class="text-lg font-medium" on:click={toggleMenu}>Features</a>
-			<a href="/lessons" class="text-lg font-medium" on:click={toggleMenu}>Lessons</a>
-			<a href="/about" class="text-lg font-medium" on:click={toggleMenu}>About</a>
+			{#each menuItems as item}
+				<a
+					href={item.href}
+					class="text-lg font-medium text-foreground"
+					on:click={toggleMenu}
+				>
+					{item.label}
+				</a>
+			{/each}
+			
 			<div class="flex flex-col gap-2 pt-4 border-t">
-				<Button variant="ghost" href="/signin" class="w-full justify-center" on:click={toggleMenu}>
-					Sign In
-				</Button>
-				<Button href="/signup" class="w-full justify-center" on:click={toggleMenu}>
-					Sign Up
-				</Button>
+				{#if $isAuthenticated}
+					<Button
+						variant="ghost"
+						on:click={() => {
+							userStore.signOut();
+							toggleMenu();
+						}}
+						class="w-full justify-center gap-2"
+					>
+						<LogOut class="size-5" />
+						<span>Logout</span>
+					</Button>
+				{:else}
+					<Button variant="ghost" href="/signin" class="w-full justify-center" on:click={toggleMenu}>
+						Sign In
+					</Button>
+					<Button href="/signup" class="w-full justify-center" on:click={toggleMenu}>
+						Sign Up
+					</Button>
+				{/if}
 			</div>
 		</div>
 	</nav>

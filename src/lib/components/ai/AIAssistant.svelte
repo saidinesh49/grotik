@@ -15,7 +15,7 @@
     const MAX_RETRIES = 3;
 
     // URL to the Next.js AI assistant
-    const assistantUrl = 'https://grotik-ai-assistant.vercel.app';
+    const assistantUrl = 'https://assistant-frontend.vercel.app';
     
     // Fallback URL in case the main one fails
     const fallbackUrl = 'https://grotik-ai-assistant.vercel.app/chat';

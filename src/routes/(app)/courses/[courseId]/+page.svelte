@@ -11,6 +11,7 @@
     import coursesData from '$lib/data/courses.json';
     import courseContentData from '$lib/data/course-content.json';
     import { marked } from 'marked';
+    import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
 
     let course: any;
     let selectedContent: any = null;
@@ -19,6 +20,7 @@
     let error = false;
     let fileTreeData: any[] = [];
     let selectedSectionId: string = '';
+    let breadcrumbItems: { label: string; path?: string }[] = [];
 
     onMount(async () => {
         if (!$isAuthenticated) {
@@ -33,6 +35,12 @@
             error = true;
             return;
         }
+
+        // Set up breadcrumb navigation
+        breadcrumbItems = [
+            { label: 'Courses', path: '/courses' },
+            { label: course.title, path: `/courses/${courseId}` }
+        ];
 
         try {
             // Find the corresponding content from the course-content.json file
@@ -91,6 +99,21 @@
     function handleContentSelect(content: any, id: string) {
         selectedContent = content;
         selectedSectionId = id;
+        
+        // Update breadcrumb with the selected section
+        if (content) {
+            breadcrumbItems = [
+                { label: 'Courses', path: '/courses' },
+                { label: course.title, path: `/courses/${$page.params.courseId}` },
+                { label: content.title }
+            ];
+        } else {
+            breadcrumbItems = [
+                { label: 'Courses', path: '/courses' },
+                { label: course.title, path: `/courses/${$page.params.courseId}` }
+            ];
+        }
+        
         // Update URL with section ID for bookmarking
         const url = new URL(window.location.href);
         url.searchParams.set('section', content.id);
@@ -178,7 +201,7 @@
         </div>
         <div class="ml-2 md:ml-0 flex gap-4">
             <button 
-                class="btn btn-primary px-4 flex items-center gap-2 border-2  rounded-md"
+                class="btn btn-primary px-4 flex items-center gap-2 border-2 border-black/50 dark:border-white/50 rounded-lg"
                 on:click={goToQuiz}
             >
                 <Brain class="h-4 w-4" />
@@ -209,23 +232,15 @@
             <div class="loading loading-spinner loading-lg"></div>
         </div>
     {:else if course}
-        <!-- Breadcrumb Navigation - Hidden on mobile, shown on larger screens -->
-        <div class="hidden md:block text-sm breadcrumbs mb-4">
-            <ul>
-                <li><a href="/courses">Courses</a></li>
-                <li><a href="/courses/{$page.params.courseId}">{course.title}</a></li>
-                {#if selectedContent}
-                    <li>{selectedContent.title}</li>
-                {:else}
-                    <li>Overview</li>
-                {/if}
-            </ul>
+        <!-- Breadcrumb Navigation - Responsive -->
+        <div class="mb-4">
+            <Breadcrumb items={breadcrumbItems} />
         </div>
 
         <div class="grid gap-6 lg:grid-cols-4">
             <!-- Course Structure (File Tree) -->
-            <div class="lg:col-span-1">
-                <div class="card bg-base-100 shadow-xl">
+            <div class="lg:col-span-1 mb-2">
+                <div class="card bg-base-100 shadow-xl py-4 pl-4 pr-4 rounded-lg">
                     <div class="card-body">
                         <h2 class="card-title">Course Structure</h2>
                         <div class="space-y-2">
@@ -240,22 +255,9 @@
             </div>
 
             <!-- Course Content -->
-            <div class="lg:col-span-3 px-0">
-                <div class="card bg-base-100 shadow-xl">
-                    <div class="card-body">
-                        <!-- Mobile Breadcrumb - Only shown on mobile -->
-                        <div class="md:hidden text-sm breadcrumbs mb-4">
-                            <ul>
-                                <li><a href="/courses">Courses</a></li>
-                                <li><a href="/courses/{$page.params.courseId}">{course.title}</a></li>
-                                {#if selectedContent}
-                                    <li>{selectedContent.title}</li>
-                                {:else}
-                                    <li>Overview</li>
-                                {/if}
-                            </ul>
-                        </div>
-
+            <div class="lg:col-span-3">
+                <div class="card bg-base-100 shadow-xl px-4 py-4">
+                    <div class="card-body gap-3">
                         <h2 class="card-title">
                             {#if selectedContent}
                                 {selectedContent.title}
@@ -339,22 +341,6 @@
                                                 <li>{step}</li>
                                             {/each}
                                         </ul>
-                                    </div>
-                                {/if}
-                                
-                                {#if courseContent.check_your_understanding && courseContent.check_your_understanding.length > 0}
-                                    <div class="mb-6 pb-8">
-                                        <h3 class="text-lg font-semibold">Check Your Understanding</h3>
-                                        <p>Take the quiz to test your knowledge!</p>
-                                        <div class="mt-4">
-                                            <button 
-                                                class="btn btn-primary gap-2"
-                                                on:click={goToQuiz}
-                                            >
-                                                <Brain class="h-4 w-4" />
-                                                Take Quiz
-                                            </button>
-                                        </div>
                                     </div>
                                 {/if}
                             </div>

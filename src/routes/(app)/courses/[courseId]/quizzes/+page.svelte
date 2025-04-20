@@ -8,9 +8,12 @@
     import { page } from '$app/stores';
     import courseContentData from '$lib/data/course-content.json';
     import confetti from 'canvas-confetti';
+    import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
+    import coursesData from '$lib/data/courses.json';
 
     let courseId = $page.params.courseId;
     let courseContent: any = null;
+    let course: any = null;
     let questions: any[] = [];
     let currentQuestionIndex = 0;
     let selectedAnswer = '';
@@ -23,11 +26,24 @@
     let isCorrect = false;
     let feedbackMessage = '';
     let answeredQuestions: boolean[] = [];
+    let breadcrumbItems: { label: string; path?: string }[] = [];
 
     onMount(async () => {
         if (!$isAuthenticated) {
             goto('/signin');
             return;
+        }
+
+        // Get course information
+        course = coursesData.courses.find((c: any) => c.id === courseId);
+        
+        // Set up breadcrumb navigation
+        if (course) {
+            breadcrumbItems = [
+                { label: 'Courses', path: '/courses' },
+                { label: course.title, path: `/courses/${courseId}` },
+                { label: 'Quiz' }
+            ];
         }
 
         try {
@@ -195,6 +211,11 @@
         </div>
     </div>
 
+    <!-- Breadcrumb Navigation -->
+    <div class="mb-4">
+        <Breadcrumb items={breadcrumbItems} />
+    </div>
+
     {#if error}
         <div class="alert alert-error">
             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -261,7 +282,7 @@
         </div>
     {:else}
         <div class="card bg-base-100 shadow-xl" in:fly={{ y: 20, duration: 500 }}>
-            <div class="card-body">
+            <div class="card-body px-6 py-2 m-0">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="card-title">Question {currentQuestionIndex + 1} of {questions.length}</h2>
                     <div class="badge badge-primary">{Math.round(getProgressPercentage())}% Complete</div>
@@ -337,7 +358,7 @@
                     </div>
                     
                     {#if getCurrentQuestion().explanation}
-                        <div class="bg-base-200 p-4 rounded-lg mb-6">
+                        <div class="bg-base-200 p-4 rounded-lg mb-6 border border-sky-500 text-sky-500">
                             <p class="font-medium">Explanation:</p>
                             <p>{getCurrentQuestion().explanation}</p>
                         </div>

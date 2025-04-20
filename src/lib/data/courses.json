@@ -5,6 +5,7 @@
       "title": "Basic Banking",
       "description": "Learn the fundamentals of banking, including account types, transactions, and financial planning.",
       "progress": 60,
+      "enrolled": 128,
       "image": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
       "content": [
         {
@@ -44,6 +45,7 @@
       "title": "Investment Basics",
       "description": "Understand the basics of investing, including stocks, bonds, and mutual funds.",
       "progress": 30,
+      "enrolled": 95,
       "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
       "content": [
         {
@@ -83,6 +85,7 @@
       "title": "Credit Management",
       "description": "Learn how to manage your credit, improve your credit score, and avoid debt traps.",
       "progress": 0,
+      "enrolled": 76,
       "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
       "content": [
         {
@@ -101,18 +104,18 @@
           "type": "folder",
           "children": [
             { "id": "credit-cards-1", "name": "Types of Credit Cards", "type": "file" },
-            { "id": "credit-cards-2", "name": "Credit Card Terms", "type": "file" },
-            { "id": "credit-cards-3", "name": "Credit Card Management", "type": "file" }
+            { "id": "credit-cards-2", "name": "Credit Card Fees", "type": "file" },
+            { "id": "credit-cards-3", "name": "Credit Card Rewards", "type": "file" }
           ]
         },
         {
           "id": "debt",
-          "name": "Debt Management",
+          "name": "Managing Debt",
           "type": "folder",
           "children": [
-            { "id": "debt-1", "name": "Understanding Debt", "type": "file" },
-            { "id": "debt-2", "name": "Debt Reduction Strategies", "type": "file" },
-            { "id": "debt-3", "name": "Debt Consolidation", "type": "file" }
+            { "id": "debt-1", "name": "Debt Repayment Strategies", "type": "file" },
+            { "id": "debt-2", "name": "Debt Consolidation", "type": "file" },
+            { "id": "debt-3", "name": "Bankruptcy", "type": "file" }
           ]
         }
       ]

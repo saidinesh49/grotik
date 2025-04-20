@@ -6,11 +6,12 @@
     import Button from '$lib/components/ui/button/button.svelte';
     import { ArrowLeft, BookOpen, Brain, MessageCircle } from 'lucide-svelte';
     import coursesData from '$lib/data/courses.json';
-    import { MagicGradientButton } from '$lib/components/magic';
+    import { MagicGradientButton, AvatarCircles } from '$lib/components/magic';
 
     onMount(() => {
         if (!$isAuthenticated) {
             goto('/signin');
+            return ;
         }
     });
 
@@ -59,16 +60,16 @@
 
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {#each coursesData.courses as course}
-            <div class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 h-full">
+            <div class="card bg-base-100 shadow-md py-5 px-5 hover:shadow-lg transition-all duration-300 h-full border rounded-md">
                 <figure class="h-48 overflow-hidden">
                     <img 
                         src={course.image} 
                         alt={course.title} 
-                        class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                        class="h-full w-full rounded-md object-cover transition-transform duration-500 hover:scale-105"
                     />
                 </figure>
                 <div class="card-body">
-                    <h2 class="card-title">{course.title}</h2>
+                    <h2 class="card-title mt-2 font-semibold">{course.title}</h2>
                     <p>{course.description}</p>
                     <div class="mt-2">
                         <div class="flex items-center justify-between">
@@ -82,14 +83,19 @@
                             ></div>
                         </div>
                     </div>
-                    <div class="card-actions justify-end mt-4">
+                    <div class="card-actions flex items-center justify-between mt-4">
                         <button 
                             class="btn btn-primary btn-sm gap-2"
                             on:click={() => goToCourse(course.id)}
                         >
-                            <BookOpen class="h-4 w-4" />
-                            Continue
+                            <span class="py-2 px-2 bg-black text-white dark:text-black dark:bg-white hover:bg-black/80 hover:text-white/90 hover:dark:bg-white/80 hover:dark:text-black/80 border font-semibold rounded-md">
+                              Continue 
+                            </span>
                         </button>
+                        <div class="flex flex-col items-end ml-2">
+                            <span class="text-xs text-gray-500 mb-1">Already Enrolled:</span>
+                            <AvatarCircles numPeople={course.enrolled || 42} class="cursor-pointer"/>
+                        </div>
                     </div>
                 </div>
             </div>

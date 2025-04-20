@@ -12,8 +12,8 @@
 	const menuItems = [
 		{
 			id: 1,
-			label: 'Features',
-			href: '/features'
+			label: 'Dashboard',
+			href: '/dashboard'
 		},
 		{
 			id: 2,

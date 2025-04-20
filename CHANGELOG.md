@@ -72,6 +72,8 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Added detailed explanations for quiz answers
 - Added responsive design for quiz interface
 - Added accessibility improvements for quiz navigation
+- Avatar Circles component from Magic UI to display enrolled users in course cards
+- Enrolled user count property to course data
 
 ### Changed
 - Updated loading components to respect theme settings
@@ -131,6 +133,11 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Updated quiz completion feedback with more detailed scoring
 - Enhanced quiz UI with better spacing and visual hierarchy
 - Improved quiz state management and tracking
+- Updated course card layout to move "Already Enrolled" section to the right side for better visual balance
+- Adjusted spacing between "Already Enrolled" text and avatar circles for better visual alignment
+- Improved UI/UX by moving "Already Enrolled" text above avatar circles for better visual organization
+- Fixed course card layout to ensure "Continue" button and "Already Enrolled" section appear side by side
+- Fixed mobile view spacing issue between "Already Enrolled" text and avatar circles
 
 ### Fixed
 - Inconsistent loading states across the application
@@ -174,6 +181,7 @@ All notable changes to the Grotik (LinguaFin) project will be documented in this
 - Fixed quiz error handling for invalid course content
 - Fixed quiz navigation when questions array is empty or invalid
 - Fixed quiz progress calculation for edge cases
+- Fixed course card layout to ensure "Continue" button and "Already Enrolled" section appear side by side
 
 ### Enhanced
 - Consistent layout structure across all pages

@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 import type { User } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider } from '$lib/config/firebase';
-import { 
+import {
     signInWithPopup,
     signOut as firebaseSignOut,
     onAuthStateChanged
@@ -18,6 +18,7 @@ interface UserStore {
     error: string | null;
 }
 
+// Create a custom Svelte store for managing user state
 const createUserStore = () => {
     const { subscribe, set, update } = writable<UserStore>({
         user: null,
@@ -30,34 +31,39 @@ const createUserStore = () => {
     return {
         subscribe,
         setUser: (user: User | null) => {
-            update(state => ({ ...state, user, loading: false, error: null }));
+            update((state) => ({ ...state, user, loading: false, error: null }));
             if (browser) {
                 if (user) {
-                    goto('/dashboard');
+                    if (window.location.pathname === '/signin' || window.location.pathname === '/signup') {
+                        goto('/dashboard'); // Redirect authenticated users trying to access signin/signup
+                    }
                 } else {
-                    goto('/signin');
+                    goto('/signin'); // Redirect unauthenticated users to signin
                 }
             }
         },
-        setError: (error: string) => update(state => ({ 
-            ...state, 
-            error, 
-            loading: false,
-            googleLoading: false,
-            facebookLoading: false 
-        })),
-        setLoading: (loading: boolean) => update(state => ({ ...state, loading })),
-        setGoogleLoading: (loading: boolean) => update(state => ({ ...state, googleLoading: loading })),
-        setFacebookLoading: (loading: boolean) => update(state => ({ ...state, facebookLoading: loading })),
+        setError: (error: string) =>
+            update((state) => ({
+                ...state,
+                error,
+                loading: false,
+                googleLoading: false,
+                facebookLoading: false
+            })),
+        setLoading: (loading: boolean) => update((state) => ({ ...state, loading })),
+        setGoogleLoading: (loading: boolean) =>
+            update((state) => ({ ...state, googleLoading: loading })),
+        setFacebookLoading: (loading: boolean) =>
+            update((state) => ({ ...state, facebookLoading: loading })),
         signOut: async () => {
             try {
                 await firebaseSignOut(auth);
-                set({ 
-                    user: null, 
-                    loading: false, 
+                set({
+                    user: null,
+                    loading: false,
                     googleLoading: false,
                     facebookLoading: false,
-                    error: null 
+                    error: null
                 });
                 if (browser) {
                     goto('/signin');
@@ -73,9 +79,12 @@ const createUserStore = () => {
 export const userStore = createUserStore();
 
 // Derived store for authentication state
-export const isAuthenticated = derived(userStore, $userStore => !!$userStore.user);
+export const isAuthenticated = derived(
+    userStore,
+    ($userStore) => !!$userStore.user
+);
 
-// Helper function to handle auth provider sign in
+// Helper function to handle auth provider sign-in
 async function handleProviderSignIn(
     provider: typeof googleProvider | typeof facebookProvider,
     isGoogle: boolean
@@ -103,7 +112,7 @@ async function handleProviderSignIn(
 export const signInWithGoogle = () => handleProviderSignIn(googleProvider, true);
 export const signInWithFacebook = () => handleProviderSignIn(facebookProvider, false);
 
-// Subscribe to auth state changes
+// Subscribe to auth state changes and update the store
 onAuthStateChanged(auth, (firebaseUser) => {
     userStore.setUser(firebaseUser);
-}); 
+});

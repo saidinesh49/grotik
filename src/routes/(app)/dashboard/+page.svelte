@@ -2,10 +2,12 @@
     import { userStore } from '$lib/stores/auth';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy, Target, Book } from 'lucide-svelte';
+    import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy, Target, Book, X } from 'lucide-svelte';
     import BorderBeam from '$lib/components/magic/borderbeam/BorderBeam.svelte';
     import Button from '$lib/components/ui/button/button.svelte';
     import { inview } from 'svelte-inview';
+    import AIAssistant from '$lib/components/ai/AIAssistant.svelte';
+    import { MagicGradientButton } from '$lib/components/magic';
 
     onMount(() => {
         if (!$userStore.user) {
@@ -19,6 +21,8 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
         activities: false
     };
 
+    let showAIAssistant = false;
+
     const handleChange = (section: keyof typeof inView) => ({ detail }) => {
         inView[section] = detail.inView;
     };
@@ -26,10 +30,11 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
     const learningStats = [
         { 
             icon: BookOpen, 
-            label: 'Lessons Completed', 
+            label: 'Courses Completed', 
             value: '8', 
             change: '+2 this week',
-            color: 'bg-black text-white dark:bg-white dark:text-black'
+            color: 'bg-black text-white dark:bg-white dark:text-black',
+            link: '/courses'
         },
         { 
             icon: Activity, 
@@ -43,7 +48,8 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
             label: 'AI Conversations', 
             value: '15', 
             change: '3 new today',
-            color: 'bg-black/10 text-black dark:bg-white/10 dark:text-white'
+            color: 'bg-black/10 text-black dark:bg-white/10 dark:text-white',
+            link: '/assistant'
         },
         { 
             icon: Coins, 
@@ -56,9 +62,9 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
 
     const recentActivities = [
         {
-            type: 'lesson',
+            type: 'course',
             icon: BookOpen,
-            title: 'Basic Banking Lesson',
+            title: 'Basic Banking Course',
             time: '1 hour ago',
             description: 'Completed introduction to banking terms'
         },
@@ -79,11 +85,15 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
     ];
 
     const menuItems = [
-        { icon: Book, label: 'Lessons', href: '/lessons' },
+        { icon: Book, label: 'Courses', href: '/courses' },
         { icon: Trophy, label: 'Progress', href: '/progress' },
         { icon: Target, label: 'Goals', href: '/goals' },
         { icon: Settings, label: 'Settings', href: '/settings' }
     ];
+
+    function toggleAIAssistant() {
+        showAIAssistant = !showAIAssistant;
+    }
 </script>
 
 <svelte:head>
@@ -127,7 +137,21 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
                         <h2 class="text-2xl font-bold text-black dark:text-white">{$userStore.user?.displayName || 'User'}</h2>
                     </div>
                 </div>
-                <Button class="rounded-full">Start New Lesson</Button>
+                <div class="flex flex-col gap-5">
+                    <MagicGradientButton 
+                        size="md"
+                        gradientColors={{
+                            firstColor: '#ff00aa',
+                            secondColor: '#00FFF1'
+                        }}
+                        on:click={toggleAIAssistant}
+                        class="flex items-center justify-center "
+                    >
+                        <MessageCircle class="h-4 w-4"/>
+                        <span>AI Assistant </span>
+                    </MagicGradientButton>
+                    <Button class="rounded-full" href="/courses">Start New Course</Button>
+                </div>
             </div>
         </div>
     </div>
@@ -159,6 +183,9 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
                         <p class="text-2xl font-bold text-black dark:text-white">{stat.value}</p>
                         <p class="text-xs text-black/60 dark:text-white/60">{stat.change}</p>
                     </div>
+                    {#if stat.link}
+                        <a href={stat.link} class="mt-2 text-xs text-primary hover:underline">View details</a>
+                    {/if}
                 </div>
             {/each}
         </div>
@@ -218,3 +245,20 @@ import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy
         {/each}
     </div>
 </div>
+
+<!-- AI Assistant Modal -->
+{#if showAIAssistant}
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="h-[80vh] w-[80vw] rounded-lg bg-base-100 p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-xl font-bold">AI Assistant</h2>
+                <Button variant="ghost" size="sm" on:click={toggleAIAssistant}>
+                    <X class="h-4 w-4" />
+                </Button>
+            </div>
+            <div class="h-[calc(100%-3rem)]">
+                <AIAssistant embedded={true} onClose={toggleAIAssistant} />
+            </div>
+        </div>
+    </div>
+{/if}

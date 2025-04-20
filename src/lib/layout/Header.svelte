@@ -17,8 +17,8 @@
 		},
 		{
 			id: 2,
-			label: 'Lessons',
-			href: '/lessons'
+			label: 'Courses',
+			href: '/courses'
 		},
 		{
 			id: 3,

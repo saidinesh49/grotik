@@ -1,10 +1,15 @@
-![grotik-logo](https://github.com/user-attachments/assets/b99dc43e-43d1-4fd6-8104-940c9d11897)
+![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
+<div align="center">
+
+![grotiklogo](https://github.com/user-attachments/assets/8272ea84-7fa3-4880-9bb1-ed56e530f222)
 
 # 🚀 Grotik
 
 > Empowering financial literacy through interactive learning and AI assistance.
-
 ---
+
+
+</div>
 
 ## 📌 Problem Statement
 
@@ -158,4 +163,4 @@ We're proud of what we've accomplished and look forward to seeing how Grotik can
 
 For any questions or feedback, please reach out to:
 - Palisetty Sai Dinesh: [dineshpalisetty49@gmail.com]
-- U Rahul Sai: [uritirahulsai@gmail.com]
+- U Rahul Sai: [20l31a03i8@vignaniit.edu.in]

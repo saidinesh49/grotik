@@ -15,13 +15,19 @@
     const MAX_RETRIES = 3;
 
     // URL to the Next.js AI assistant
-    const assistantUrl = 'https://assistant-frontend.vercel.app';
+    // const assistantUrl = 'https://grotik-ai-assistant.vercel.app'; // Old Vercel URL
+    // const assistantUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render URL
+    const assistantUrl = 'http://localhost:3001'; // Local development URL
     
     // Fallback URL in case the main one fails
-    const fallbackUrl = 'https://grotik-ai-assistant.vercel.app/chat';
+    // const fallbackUrl = 'https://grotik-ai-assistant.vercel.app/chat'; // Old Vercel Fallback
+    // const fallbackUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render Fallback
+    const fallbackUrl = 'http://localhost:3001'; // Local fallback URL
     
     // Direct link to the Next.js app (for when iframe fails)
-    const directLinkUrl = 'https://grotik-ai-assistant.vercel.app';
+    // const directLinkUrl = 'https://grotik-ai-assistant.vercel.app'; // Old Vercel Direct Link
+    // const directLinkUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render Direct Link
+    const directLinkUrl = 'http://localhost:3001'; // Local direct link URL
 
     onMount(() => {
         // Handle iframe load event
@@ -115,10 +121,10 @@
                         <div class="mt-4 rounded-lg bg-base-200 p-4 text-left">
                             <h3 class="mb-2 font-semibold">Troubleshooting:</h3>
                             <ol class="list-decimal pl-5 text-sm">
-                                <li class="mb-1">Make sure the Next.js AI assistant is deployed to Vercel</li>
+                                <li class="mb-1">Make sure the AI assistant server is running locally on port 3001</li>
                                 <li class="mb-1">Check that the URL is correct: {directLinkUrl}</li>
                                 <li class="mb-1">Try opening the AI assistant directly in a new tab</li>
-                                <li>Contact support if the issue persists</li>
+                                <li>Check browser console for errors if the issue persists</li>
                             </ol>
                             <Button 
                                 variant="link" 

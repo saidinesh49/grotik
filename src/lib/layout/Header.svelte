@@ -9,11 +9,11 @@
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
-	const menuItems = [
+	$: menuItems = [
 		{
 			id: 1,
-			label: 'Dashboard',
-			href: '/dashboard'
+			label: 'Features',
+			href: '/features'
 		},
 		{
 			id: 2,
@@ -24,7 +24,15 @@
 			id: 3,
 			label: 'About',
 			href: '/about'
-		}
+		},
+		// Show dashboard link only when authenticated and not on dashboard page
+		...$isAuthenticated && !$page.url.pathname.includes('/dashboard')
+			? [{
+				id: 4,
+				label: 'Dashboard',
+				href: '/dashboard'
+			}]
+			: []
 	];
 
 	let hamburgerMenuIsOpen = false;

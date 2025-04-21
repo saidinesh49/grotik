@@ -8,6 +8,8 @@
     import { page } from '$app/stores';
     import courseContentData from '$lib/data/course-content.json';
     import confetti from 'canvas-confetti';
+    import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
+    import coursesData from '$lib/data/courses.json';
 
     let courseId = $page.params.courseId;
     let courseContent: any = null;
@@ -23,6 +25,12 @@
     let isCorrect = false;
     let feedbackMessage = '';
     let answeredQuestions: boolean[] = [];
+    let courseTitle = 'Course';
+
+    let breadcrumbItems: { label: string; path?: string }[] = [];
+
+    // Key for localStorage persistence
+    const localStorageKey = `quizState_${courseId}`;
 
     onMount(async () => {
         if (!$isAuthenticated) {
@@ -31,32 +39,54 @@
         }
 
         try {
-            // Find the corresponding content from the course-content.json file
+            const courseInfo = coursesData.find(c => c.id === courseId);
+            if (courseInfo) {
+                courseTitle = courseInfo.title;
+            }
+
+            breadcrumbItems = [
+                { label: 'Courses', path: '/courses' },
+                { label: courseTitle, path: `/courses/${courseId}` },
+                { label: 'Quiz' }
+            ];
+
             const contentIndex = getContentIndex(courseId);
-            console.log('Course ID:', courseId);
-            console.log('Content Index:', contentIndex);
-            
             if (contentIndex !== -1) {
                 courseContent = courseContentData[contentIndex];
-                console.log('Course Content:', courseContent);
-                
-                if (courseContent && courseContent.check_your_understanding) {
-                    // Ensure check_your_understanding is an array
-                    if (Array.isArray(courseContent.check_your_understanding)) {
+                if (courseContent && courseContent.check_your_understanding && Array.isArray(courseContent.check_your_understanding)) {
                         questions = courseContent.check_your_understanding;
-                        console.log('Quiz Questions:', questions);
-                        // Initialize answered questions array
                         answeredQuestions = new Array(questions.length).fill(false);
+
+                    // --- Persistence: Load state ---
+                    const savedState = localStorage.getItem(localStorageKey);
+                    if (savedState) {
+                        try {
+                            const parsedState = JSON.parse(savedState);
+                            // Only restore if the number of questions matches
+                            if (parsedState.questionCount === questions.length) {
+                                currentQuestionIndex = parsedState.currentQuestionIndex || 0;
+                                score = parsedState.score || 0;
+                                answeredQuestions = parsedState.answeredQuestions || new Array(questions.length).fill(false);
+                                quizCompleted = currentQuestionIndex >= questions.length -1 && answeredQuestions[currentQuestionIndex]; // Check if completed
+                                console.log('Restored quiz state:', parsedState);
                     } else {
-                        console.error('check_your_understanding is not an array:', courseContent.check_your_understanding);
-                        error = true;
+                                console.warn('Saved quiz state question count mismatch. Resetting.');
+                                localStorage.removeItem(localStorageKey); // Remove mismatched state
+                            }
+                        } catch (e) {
+                            console.error("Failed to parse saved quiz state, resetting.", e);
+                            localStorage.removeItem(localStorageKey); // Remove invalid state
+                        }
                     }
+                    // --- End Persistence Load ---
+
                 } else {
-                    console.log('No quiz questions found in course content');
+                    error = true;
+                    console.error('Quiz questions not found or not an array in course content for:', courseId);
                 }
             } else {
-                console.log('Course ID not found in content map');
                 error = true;
+                console.error('Course ID not found in content map:', courseId);
             }
         } catch (err) {
             console.error('Error loading quiz questions:', err);
@@ -65,6 +95,24 @@
             loading = false;
         }
     });
+
+    // --- Persistence: Save state function ---
+    function saveQuizState() {
+        try {
+            const stateToSave = {
+                currentQuestionIndex,
+                score,
+                answeredQuestions,
+                questionCount: questions.length // Store question count for validation
+            };
+            localStorage.setItem(localStorageKey, JSON.stringify(stateToSave));
+            console.log('Quiz state saved:', stateToSave);
+        } catch (e) {
+            console.error("Failed to save quiz state to localStorage", e);
+        }
+    }
+    // --- End Persistence Save ---
+
 
     function getContentIndex(courseId: string): number {
         // Map course IDs to content indices
@@ -104,83 +152,73 @@
 
     function selectAnswer(answer: string) {
         selectedAnswer = answer;
-        console.log('Selected Answer:', answer);
+        // Don't save state on mere selection, only after checking/navigating
     }
 
     function checkAnswer() {
-        if (!questions[currentQuestionIndex]) {
-            console.log('No question at current index:', currentQuestionIndex);
+        if (!questions[currentQuestionIndex] || answeredQuestions[currentQuestionIndex]) {
+             // Don't re-check if already answered
             return;
         }
         
         const question = questions[currentQuestionIndex];
-        console.log('Checking answer for question:', question);
-        console.log('Selected Answer:', selectedAnswer);
-        console.log('Short Answer:', shortAnswer);
-        
         let correct = false;
         
-        if (question.type === 'multiple_choice' || question.type === 'true_false') {
+        if (question.type === 'multiple_choice') {
             correct = selectedAnswer === question.answer;
-            console.log('Correct Answer:', question.answer);
-            console.log('Is Correct:', correct);
+        } else if (question.type === 'true_false') {
+            const correctAnswer = typeof question.answer === 'boolean' ? String(question.answer) : question.answer;
+            const normalizedSelected = selectedAnswer.toLowerCase();
+            const normalizedCorrect = correctAnswer.toLowerCase();
+            correct = normalizedSelected === normalizedCorrect;
         } else if (question.type === 'short_answer') {
-            // Simple string matching for short answers
             correct = shortAnswer.toLowerCase().trim() === question.answer.toLowerCase().trim();
-            console.log('Correct Answer:', question.answer);
-            console.log('Is Correct:', correct);
         }
         
         isCorrect = correct;
-        feedbackMessage = correct ? 'Correct!' : `Incorrect. The correct answer is: ${question.answer}`;
-        showFeedback = true;
-        
-        if (correct) {
-            score++;
-            // Trigger confetti for correct answers
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+        let displayAnswer = question.answer;
+        if (question.type === 'true_false' && typeof question.answer === 'boolean') {
+            displayAnswer = question.answer ? 'True' : 'False';
         }
         
-        // Mark this question as answered
-        answeredQuestions[currentQuestionIndex] = true;
+        feedbackMessage = correct ? 'Correct!' : `Incorrect. The correct answer is: ${displayAnswer}`;
+        showFeedback = true;
+        answeredQuestions[currentQuestionIndex] = true; // Mark as answered HERE
+        
+        if (correct) {
+            score++; // Update score only if correct
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        
+        saveQuizState(); // --- Persistence: Save after checking ---
     }
 
     function nextQuestion() {
-        console.log('Next Question clicked');
-        console.log('Current Index:', currentQuestionIndex);
-        console.log('Questions Length:', questions.length);
-        
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             selectedAnswer = '';
             shortAnswer = '';
             showFeedback = false;
-            console.log('Moving to next question, new index:', currentQuestionIndex);
-        } else {
+            saveQuizState(); // --- Persistence: Save on navigation ---
+        } else if (!quizCompleted) {
+             // Only mark completed if moving past the last question
             quizCompleted = true;
+            saveQuizState(); // --- Persistence: Save on completion ---
             console.log('Quiz completed');
         }
     }
     
     function previousQuestion() {
-        console.log('Previous Question clicked');
-        console.log('Current Index:', currentQuestionIndex);
-        
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
-            selectedAnswer = '';
+            selectedAnswer = ''; // Reset selection when moving back
             shortAnswer = '';
-            showFeedback = false;
-            console.log('Moving to previous question, new index:', currentQuestionIndex);
+            showFeedback = false; // Hide feedback when moving
+            saveQuizState(); // --- Persistence: Save on navigation ---
         }
     }
 
     function restartQuiz() {
-        console.log('Restarting quiz');
         currentQuestionIndex = 0;
         selectedAnswer = '';
         shortAnswer = '';
@@ -188,25 +226,30 @@
         quizCompleted = false;
         showFeedback = false;
         answeredQuestions = new Array(questions.length).fill(false);
+        localStorage.removeItem(localStorageKey); // --- Persistence: Clear saved state ---
+        saveQuizState(); // Save the initial state (all 0s)
+        console.log('Quiz restarted');
     }
 
-    function getCurrentQuestion() {
+    // --- Reactivity Fix: Make currentQuestion reactive ---
+    $: currentQuestion = (() => {
         if (!questions || !Array.isArray(questions) || questions.length === 0) {
-            return { question: 'No question available', type: 'multiple_choice', options: [], answer: '' };
+            // Return a default structure to avoid errors during loading/error states
+            return { question: 'Loading question...', type: 'multiple_choice', options: [], answer: '' };
         }
+        // Ensure index is valid
+        const index = Math.max(0, Math.min(currentQuestionIndex, questions.length - 1));
+        return questions[index];
+    })();
+    // --- End Reactivity Fix ---
         
-        const question = questions[currentQuestionIndex] || questions[0];
-        console.log('Current Question:', question);
-        return question;
-    }
 
+    // Keep original getProgressPercentage function...
     function getProgressPercentage() {
         if (!questions || !Array.isArray(questions) || questions.length === 0) {
             return 0;
         }
-        
         const percentage = ((currentQuestionIndex + 1) / questions.length) * 100;
-        console.log('Progress Percentage:', percentage);
         return percentage;
     }
     
@@ -221,205 +264,156 @@
     }
 </script>
 
-<div class="container mx-auto px-4 py-8" in:fade>
-    <div class="mb-6 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <button 
-                class="btn btn-circle btn-ghost btn-sm" 
-                on:click={goBack}
-                aria-label="Go back"
-            >
-                <ArrowLeft class="h-5 w-5" />
-            </button>
-            <h1 class="text-3xl font-bold">Course Quiz</h1>
-        </div>
-    </div>
+<svelte:head>
+    <title>{courseTitle} Quiz | Grotik</title>
+    <meta name="description" content={`Test your knowledge for the ${courseTitle} course.`} />
+</svelte:head>
 
-    {#if error}
-        <div class="alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>Failed to load quiz. Please try again later.</span>
-        </div>
-    {:else if loading}
+<div class="container mx-auto max-w-3xl px-4 py-8">
+    {#if loading}
         <div class="flex justify-center items-center h-64">
-            <div class="loading loading-spinner loading-lg"></div>
+            <div class="spinner"></div>
         </div>
-    {:else if !questions || questions.length === 0}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">No Quiz Available</h2>
-                <p>There are no quiz questions available for this course yet.</p>
-                <div class="card-actions justify-end">
-                    <Button 
-                        variant="primary" 
-                        on:click={goToCourse}
-                        class="gap-2"
-                    >
-                        <BookOpen class="h-4 w-4" />
-                        Return to Course
-                    </Button>
-                </div>
-            </div>
+    {:else if error}
+        <div class="text-center text-red-500">
+            <p>Error loading quiz. Please try again later.</p>
+            <Button on:click={() => goto('/courses')} class="mt-4">Back to Courses</Button>
         </div>
-    {:else if quizCompleted}
-        <div class="card bg-base-100 shadow-xl" in:fly={{ y: 20, duration: 500 }}>
-            <div class="card-body">
-                <h2 class="card-title">Quiz Completed!</h2>
-                <div class="flex flex-col items-center justify-center py-8">
-                    <div class="text-6xl font-bold mb-4">{score}/{questions.length}</div>
-                    <div class="text-xl mb-6">
-                        {#if score === questions.length}
-                            Perfect score! Excellent work!
-                        {:else if score >= questions.length * 0.8}
-                            Great job! You've mastered most of the material.
-                        {:else if score >= questions.length * 0.6}
-                            Good effort! You've learned a lot.
                         {:else}
-                            Keep studying! You'll improve with practice.
-                        {/if}
-                    </div>
-                    <div class="flex gap-4">
-                        <Button 
-                            variant="primary" 
-                            on:click={restartQuiz}
-                            class="gap-2"
-                        >
-                            <Brain class="h-4 w-4" />
-                            Try Again
+        <div class="mb-6 flex items-center justify-between">
+            <Button variant="ghost" size="icon" on:click={goBack} class="mr-2">
+                <ArrowLeft />
                         </Button>
-                        <Button 
-                            variant="outline" 
-                            on:click={goToCourse}
-                            class="gap-2"
-                        >
-                            <BookOpen class="h-4 w-4" />
-                            Return to Course
-                        </Button>
-                    </div>
-                </div>
-            </div>
+            <h1 class="text-2xl font-bold">Course Quiz</h1>
+            <div class="w-10"></div>
         </div>
-    {:else}
-        <div class="card bg-base-100 shadow-xl" in:fly={{ y: 20, duration: 500 }}>
+
+        <Breadcrumb items={breadcrumbItems} />
+
+        {#if !quizCompleted}
+            <div class="card bg-base-100 shadow-xl mb-8">
             <div class="card-body">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="card-title">Question {currentQuestionIndex + 1} of {questions.length}</h2>
-                    <div class="badge badge-primary">{Math.round(getProgressPercentage())}% Complete</div>
-                </div>
-                
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-                    <div class="bg-primary h-2.5 rounded-full" style="width: {getProgressPercentage()}%"></div>
+                    <div class="mb-4">
+                        <progress class="progress progress-primary w-full" value={getProgressPercentage()} max="100"></progress>
+                        <p class="text-sm text-right mt-1">Question {currentQuestionIndex + 1} of {questions.length}</p>
                 </div>
                 
                 <div class="mb-6">
-                    <p class="text-lg font-medium">{getCurrentQuestion().question}</p>
+                        <p class="text-lg font-medium">{@html currentQuestion.question}</p>
                 </div>
                 
-                {#if getCurrentQuestion().type === 'multiple_choice'}
+                    {#if currentQuestion.type === 'multiple_choice'}
                     <div class="space-y-3 mb-6">
-                        {#each getCurrentQuestion().options as option}
-                            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === option ? 'border-primary bg-primary/10' : ''}">
+                            {#each currentQuestion.options as option}
+                                <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === option ? 'border-primary bg-primary/10' : ''} {showFeedback && option === currentQuestion.answer && isCorrect ? 'border-green-500' : ''} {showFeedback && selectedAnswer === option && !isCorrect ? 'border-red-500' : ''}">
                                 <input 
                                     type="radio" 
-                                    name="answer" 
+                                        name="mcqAnswer"
                                     value={option} 
                                     bind:group={selectedAnswer}
                                     class="radio radio-primary mr-3"
-                                />
+                                        disabled={showFeedback}
+                                    >
                                 <span>{option}</span>
                             </label>
                         {/each}
                     </div>
-                {:else if getCurrentQuestion().type === 'true_false'}
+                    {:else if currentQuestion.type === 'true_false'}
                     <div class="grid grid-cols-2 gap-4 mb-6">
-                        <label class="flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === 'True' ? 'border-primary bg-primary/10' : ''}">
-                            <input 
-                                type="radio" 
-                                name="answer" 
-                                value="True" 
-                                bind:group={selectedAnswer}
-                                class="radio radio-primary mr-3"
-                            />
+                            <label class="flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === 'True' || selectedAnswer === 'true' ? 'border-primary bg-primary/10' : ''} {showFeedback && currentQuestion.answer === true && isCorrect ? 'border-green-500' : ''} {showFeedback && (selectedAnswer === 'True' || selectedAnswer === 'true') && !isCorrect ? 'border-red-500' : ''}">
+                                <input type="radio" name="tfAnswer" value="True" bind:group={selectedAnswer} class="radio radio-primary mr-3" disabled={showFeedback}>
                             <span>True</span>
                         </label>
-                        <label class="flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === 'False' ? 'border-primary bg-primary/10' : ''}">
-                            <input 
-                                type="radio" 
-                                name="answer" 
-                                value="False" 
-                                bind:group={selectedAnswer}
-                                class="radio radio-primary mr-3"
-                            />
+                             <label class="flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === 'False' || selectedAnswer === 'false' ? 'border-primary bg-primary/10' : ''} {showFeedback && currentQuestion.answer === false && isCorrect ? 'border-green-500' : ''} {showFeedback && (selectedAnswer === 'False' || selectedAnswer === 'false') && !isCorrect ? 'border-red-500' : ''}">
+                                <input type="radio" name="tfAnswer" value="False" bind:group={selectedAnswer} class="radio radio-primary mr-3" disabled={showFeedback}>
                             <span>False</span>
                         </label>
                     </div>
-                {:else if getCurrentQuestion().type === 'short_answer'}
+                    {:else if currentQuestion.type === 'short_answer'}
                     <div class="mb-6">
                         <input 
                             type="text" 
-                            placeholder="Type your answer here" 
                             bind:value={shortAnswer}
-                            class="input input-bordered w-full"
+                                placeholder="Your answer here..."
+                                class="input input-bordered w-full {showFeedback && isCorrect ? 'border-green-500' : ''} {showFeedback && !isCorrect ? 'border-red-500' : ''}"
+                                disabled={showFeedback}
                         />
                     </div>
                 {/if}
                 
                 {#if showFeedback}
-                    <div class="alert {isCorrect ? 'alert-success' : 'alert-error'} mb-6" in:fly={{ y: 10, duration: 300 }}>
-                        {#if isCorrect}
-                            <Check class="h-5 w-5" />
+                        <div 
+                            class="mt-4 rounded-lg p-4 text-sm {isCorrect ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
+                            transition:fade
+                        >
+                             {#if currentQuestion.explanation}
+                                 <p class="font-semibold mb-1">{@html feedbackMessage}</p>
+                                <hr class="my-2 border-current opacity-30">
+                                <p class="text-xs"><i>Explanation:</i> {@html currentQuestion.explanation}</p>
                         {:else}
-                            <X class="h-5 w-5" />
+                                <p>{@html feedbackMessage}</p>
                         {/if}
-                        <span>{feedbackMessage}</span>
-                    </div>
-                    
-                    {#if getCurrentQuestion().explanation}
-                        <div class="bg-base-200 p-4 rounded-lg mb-6">
-                            <p class="font-medium">Explanation:</p>
-                            <p>{getCurrentQuestion().explanation}</p>
                         </div>
-                    {/if}
                 {/if}
                 
-                <div class="card-actions justify-between">
-                    <div>
-                        {#if currentQuestionIndex > 0}
+                    <div class="card-actions mt-8 flex justify-between items-center">
                             <Button 
-                                variant="outline" 
+                            variant="ghost" 
                                 on:click={previousQuestion}
-                                class="gap-2"
+                            disabled={currentQuestionIndex === 0}
+                            class=" {currentQuestionIndex === 0 ? 'invisible' : ''}"
                             >
-                                <ChevronLeft class="h-4 w-4" />
-                                Previous
+                            <ChevronLeft class="mr-2 size-4" /> Previous
                             </Button>
-                        {/if}
-                    </div>
                     
-                    <div>
                         {#if !showFeedback}
                             <Button 
-                                variant="primary" 
                                 on:click={checkAnswer}
-                                disabled={!selectedAnswer && !shortAnswer}
-                                class="gap-2"
+                                disabled={(currentQuestion.type === 'short_answer' ? !shortAnswer : !selectedAnswer) || answeredQuestions[currentQuestionIndex]}
+                                class="btn-primary"
                             >
-                                <Check class="h-4 w-4" />
-                                Check Answer
+                                 Check Answer {answeredQuestions[currentQuestionIndex] ? '(Answered)' : ''}
                             </Button>
                         {:else}
-                            <Button 
-                                variant="primary" 
-                                on:click={nextQuestion}
-                                class="gap-2"
-                            >
-                                {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
-                                <ChevronRight class="h-4 w-4" />
+                             <Button on:click={nextQuestion} class="btn-primary">
+                                {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'} <ChevronRight class="ml-2 size-4" />
                             </Button>
                         {/if}
                     </div>
                 </div>
             </div>
+        {:else}
+             <div class="card bg-base-100 shadow-xl text-center">
+                <div class="card-body items-center">
+                    <h2 class="card-title text-2xl mb-4">Quiz Completed!</h2>
+                    <p class="text-lg mb-2">Your Score: <span class="font-bold">{score} out of {questions.length}</span></p>
+                    <div class="radial-progress text-primary mb-6" style="--value:{Math.round((score / questions.length) * 100)}; --size:12rem; --thickness: 1rem;" role="progressbar">
+                        {Math.round((score / questions.length) * 100)}%
+                    </div>
+                    <div class="card-actions justify-center space-x-4">
+                        <Button on:click={restartQuiz} variant="outline">
+                            <Brain class="mr-2 size-4"/> Retake Quiz
+                        </Button>
+                        <Button on:click={() => goto('/courses')} class="btn-primary">
+                            <BookOpen class="mr-2 size-4"/> Back to Courses
+                        </Button>
+                </div>
+            </div>
         </div>
+        {/if}
     {/if}
 </div> 
+
+<style>
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top-color: hsl(var(--p));
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style> 

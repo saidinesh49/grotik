@@ -2,11 +2,12 @@
     import { userStore } from '$lib/stores/auth';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy, Target, Book, X } from 'lucide-svelte';
+    import { User, BookOpen, Activity, Coins, Brain, MessageCircle, Settings, Trophy, Target, Book, X, Bot } from 'lucide-svelte';
     import BorderBeam from '$lib/components/magic/borderbeam/BorderBeam.svelte';
     import Button from '$lib/components/ui/button/button.svelte';
     import { inview } from 'svelte-inview';
     import AIAssistant from '$lib/components/ai/AIAssistant.svelte';
+    import MarketUpdates from '$lib/components/market/MarketUpdates.svelte';
     import { MagicGradientButton } from '$lib/components/magic';
 
     onMount(() => {
@@ -228,8 +229,27 @@
         </div>
     </div>
 
+    <!-- Market Updates Section -->
+    <div class="mb-12">
+        <MarketUpdates />
+    </div>
+
     <!-- Menu Grid -->
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- AI Assistant Button -->
+        <button
+            on:click={toggleAIAssistant}
+            class="group relative overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md dark:border-white/10 dark:bg-black/20"
+        >
+            <div class="flex flex-col items-center gap-4 text-center">
+                <div class="rounded-full border-2 border-black/10 bg-white p-4 transition-colors group-hover:border-black/20 dark:border-white/10 dark:bg-black dark:group-hover:border-white/20">
+                    <Bot class="size-6 text-black dark:text-white" />
+                </div>
+                <h3 class="font-semibold text-black dark:text-white">AI Assistant</h3>
+            </div>
+        </button>
+
+        <!-- Other Menu Items -->
         {#each menuItems as { icon: Icon, label, href }}
             <a
                 {href}

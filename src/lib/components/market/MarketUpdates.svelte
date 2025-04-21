@@ -126,17 +126,44 @@
         return `${sign}${change.toFixed(2)} (${sign}${changePercent.toFixed(2)}%)`;
     }
 
-    function formatTime(timestamp: number | null | undefined): string {
+    function formatTime(timestamp: number | null | undefined, marketKey: 'US' | 'IN'): string {
         if (!timestamp) return 'N/A';
         const date = new Date(timestamp);
-        return date.toLocaleString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            hour: 'numeric', 
-            minute: '2-digit', 
-            hour12: true,
-            timeZoneName: 'short'
-        });
+        
+        const marketTimezone = marketKey === 'US' ? 'America/New_York' : 'Asia/Kolkata';
+        
+        const commonOptions: Intl.DateTimeFormatOptions = {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        };
+        
+        try {
+            const marketTime = date.toLocaleString('en-US', { 
+                ...commonOptions,
+                timeZone: marketTimezone,
+                timeZoneName: 'short' 
+            });
+
+            const userTime = date.toLocaleString('en-US', { 
+                 ...commonOptions,
+                 timeZoneName: 'short'
+            });
+
+            if (marketTime === userTime) {
+                return marketTime;
+            }
+
+            return `${marketTime} (${userTime})`;
+        } catch (error) {
+            console.error("Error formatting time for timezone:", error);
+             return date.toLocaleString('en-US', { 
+                ...commonOptions,
+                timeZoneName: 'short'
+            });
+        }
     }
 
     function getMarketStatusInfo(marketKey: 'US' | 'IN'): { text: string; class: string; nextEventText: string } {
@@ -151,34 +178,34 @@
             case 'PRE_MARKET':
                 text = 'Pre-Market';
                 cssClass = 'text-blue-600 dark:text-blue-400';
-                if (status.nextCloseTime) nextEventText = `Regular Open: ${formatTime(status.nextCloseTime)}`;
+                if (status.nextCloseTime) nextEventText = `Regular Open: ${formatTime(status.nextCloseTime, marketKey)}`;
                 break;
             case 'OPEN':
                 text = 'Open';
                 cssClass = 'text-green-600 dark:text-green-400';
-                if (status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime)}`;
+                if (status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime, marketKey)}`;
                 break;
             case 'AFTER_HOURS':
                 text = 'After-Hours';
                 cssClass = 'text-purple-600 dark:text-purple-400';
-                if (status.nextCloseTime) nextEventText = `After-Hours End: ${formatTime(status.nextCloseTime)}`;
+                if (status.nextCloseTime) nextEventText = `After-Hours End: ${formatTime(status.nextCloseTime, marketKey)}`;
                 break;
             case 'CLOSED':
                 text = 'Closed';
                 cssClass = 'text-amber-600 dark:text-amber-400';
-                if (status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime)}`;
+                if (status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime, marketKey)}`;
                 break;
             default:
-                text = status.status || 'Unknown';
+                if (status.isOpen !== undefined) {
+                     text = status.isOpen ? 'Open' : 'Closed';
+                     cssClass = status.isOpen ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400';
+                    if (status.isOpen && status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime, marketKey)}`;
+                     if (!status.isOpen && status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime, marketKey)}`;
+                } else {
+                    text = status.status || 'Unknown';
+                }
         }
         
-        if (status.status === undefined) {
-            text = status.isOpen ? 'Open' : 'Closed';
-            cssClass = status.isOpen ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400';
-            if (status.isOpen && status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime)}`;
-            if (!status.isOpen && status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime)}`;
-        }
-
         return { text, class: cssClass, nextEventText };
     }
 

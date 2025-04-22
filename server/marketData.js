@@ -26,7 +26,7 @@ if (config.GEMINI_API_KEY) {
     try {
         genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
         generativeModel = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash", // Or another suitable model
+            model: "gemini-2.0-flash", // Or another suitable model
             // Configuration for grounding (ensure structure matches SDK expectations)
             tools: [{
                 "aip_grounding_tool": {

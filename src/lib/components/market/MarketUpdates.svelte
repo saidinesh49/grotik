@@ -126,44 +126,17 @@
         return `${sign}${change.toFixed(2)} (${sign}${changePercent.toFixed(2)}%)`;
     }
 
-    function formatTime(timestamp: number | null | undefined, marketKey: 'US' | 'IN'): string {
+    function formatTime(timestamp: number | null | undefined): string {
         if (!timestamp) return 'N/A';
         const date = new Date(timestamp);
-        
-        const marketTimezone = marketKey === 'US' ? 'America/New_York' : 'Asia/Kolkata';
-        
-        const commonOptions: Intl.DateTimeFormatOptions = {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-        };
-        
-        try {
-            const marketTime = date.toLocaleString('en-US', { 
-                ...commonOptions,
-                timeZone: marketTimezone,
-                timeZoneName: 'short' 
-            });
-
-            const userTime = date.toLocaleString('en-US', { 
-                 ...commonOptions,
-                 timeZoneName: 'short'
-            });
-
-            if (marketTime === userTime) {
-                return marketTime;
-            }
-
-            return `${marketTime} (${userTime})`;
-        } catch (error) {
-            console.error("Error formatting time for timezone:", error);
-             return date.toLocaleString('en-US', { 
-                ...commonOptions,
-                timeZoneName: 'short'
-            });
-        }
+        return date.toLocaleString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            hour: 'numeric', 
+            minute: '2-digit', 
+            hour12: true,
+            timeZoneName: 'short'
+        });
     }
 
     function getMarketStatusInfo(marketKey: 'US' | 'IN'): { text: string; class: string; nextEventText: string } {
@@ -178,34 +151,34 @@
             case 'PRE_MARKET':
                 text = 'Pre-Market';
                 cssClass = 'text-blue-600 dark:text-blue-400';
-                if (status.nextCloseTime) nextEventText = `Regular Open: ${formatTime(status.nextCloseTime, marketKey)}`;
+                if (status.nextCloseTime) nextEventText = `Regular Open: ${formatTime(status.nextCloseTime)}`;
                 break;
             case 'OPEN':
                 text = 'Open';
                 cssClass = 'text-green-600 dark:text-green-400';
-                if (status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime, marketKey)}`;
+                if (status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime)}`;
                 break;
             case 'AFTER_HOURS':
                 text = 'After-Hours';
                 cssClass = 'text-purple-600 dark:text-purple-400';
-                if (status.nextCloseTime) nextEventText = `After-Hours End: ${formatTime(status.nextCloseTime, marketKey)}`;
+                if (status.nextCloseTime) nextEventText = `After-Hours End: ${formatTime(status.nextCloseTime)}`;
                 break;
             case 'CLOSED':
                 text = 'Closed';
                 cssClass = 'text-amber-600 dark:text-amber-400';
-                if (status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime, marketKey)}`;
+                if (status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime)}`;
                 break;
             default:
-                if (status.isOpen !== undefined) {
-                     text = status.isOpen ? 'Open' : 'Closed';
-                     cssClass = status.isOpen ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400';
-                    if (status.isOpen && status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime, marketKey)}`;
-                     if (!status.isOpen && status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime, marketKey)}`;
-                } else {
-                    text = status.status || 'Unknown';
-                }
+                text = status.status || 'Unknown';
         }
         
+        if (status.status === undefined) {
+            text = status.isOpen ? 'Open' : 'Closed';
+            cssClass = status.isOpen ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400';
+            if (status.isOpen && status.nextCloseTime) nextEventText = `Closes: ${formatTime(status.nextCloseTime)}`;
+            if (!status.isOpen && status.nextOpenTime) nextEventText = `Opens: ${formatTime(status.nextOpenTime)}`;
+        }
+
         return { text, class: cssClass, nextEventText };
     }
 
@@ -401,9 +374,11 @@
                             </td>
                             <td class="hidden whitespace-nowrap px-4 py-4 text-sm text-black/80 dark:text-white/80 lg:table-cell">{formatVolume(update.volume)}</td>
                             <td class="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
-                                <Button variant="ghost" size="sm" on:click={() => toggleRowExpansion(update.symbol)} title={isExpanded ? 'Hide Details' : 'Show Details'}>
-                                    <ChevronDown class="size-4 transform transition-transform {isExpanded ? 'rotate-180' : ''}" />
-                                </Button>
+                                {#if update.news?.length > 0 || update.insight}
+                                    <Button variant="ghost" size="sm" on:click={() => toggleRowExpansion(update.symbol)} title={isExpanded ? 'Hide Details' : 'Show Details'}>
+                                        <ChevronDown class="size-4 transform transition-transform {isExpanded ? 'rotate-180' : ''}" />
+                                    </Button>
+                                {/if}
                             </td>
                         </tr>
                         {#if isExpanded}
@@ -414,17 +389,12 @@
                                             <div class="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300">
                                                 <Lightbulb class="mt-1 size-4 flex-shrink-0" />
                                                 <span><strong>AI Insight:</strong> {update.insight}</span>
-                                            </div>
-                                        {:else}
-                                            <div class="flex items-center gap-2 rounded-md border border-dashed border-black/10 p-3 text-sm text-black/50 dark:border-white/10 dark:text-white/50">
-                                                <Lightbulb class="mt-1 size-4 flex-shrink-0" />
-                                                <span>No AI insight available.</span>
                     </div>
                                         {/if}
                                         
-                                        <div>
-                                            <h4 class="mb-2 text-xs font-medium uppercase tracking-wider text-black/60 dark:text-white/60">Recent News</h4>
-                                            {#if update.news && update.news.length > 0}
+                                        {#if update.news && update.news.length > 0}
+                                            <div>
+                                                <h4 class="mb-2 text-xs font-medium uppercase tracking-wider text-black/60 dark:text-white/60">Recent News</h4>
                                                 <ul class="space-y-3">
                                                     {#each update.news as newsItem}
                                                         <li class="flex items-start gap-2 text-sm">
@@ -441,13 +411,8 @@
                                                         </li>
                                                     {/each}
                                                 </ul>
-                                            {:else}
-                                                <div class="flex items-center gap-2 rounded-md border border-dashed border-black/10 p-3 text-sm text-black/50 dark:border-white/10 dark:text-white/50">
-                                                    <Newspaper class="mt-1 size-4 flex-shrink-0" />
-                                                    <span>No recent news available.</span>
-                                                </div>
+                                            </div>
                     {/if}
-                                        </div>
                     </div>
                                 </td>
                             </tr>

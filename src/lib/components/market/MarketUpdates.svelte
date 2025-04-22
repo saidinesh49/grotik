@@ -1,4 +1,4 @@
-<script lang="ts"> 
+<script lang="ts">  
     import { onMount, onDestroy } from 'svelte';
     import { marketStore, type SingleMarketStatus, type MarketUpdate } from '$lib/stores/market';
     import { Bell, BellOff, TrendingUp, Clock, AlertTriangle, RefreshCcw, Newspaper, Lightbulb, ChevronDown, Check } from 'lucide-svelte';

@@ -112,7 +112,9 @@
         let correct = false;
         
         if (question.type === 'multiple_choice' || question.type === 'true_false') {
-            correct = selectedAnswer === question.answer;
+            console.log("selected answer:",selectedAnswer);
+            correct = selectedAnswer === (questions[currentQuestionIndex].answer).toString();
+            console.log(correct);
         } else if (question.type === 'short_answer') {
             // Simple string matching for short answers
             correct = shortAnswer.toLowerCase().trim() === question.answer.toLowerCase().trim();
@@ -188,8 +190,19 @@
         return question;
     }
 
-    function getProgressPercentage() {
-        return ((currentQuestionIndex + 1) / questions.length) * 100;
+    function isCurrentQuestionType(ansType:string = "multiple_choice"){
+        const question=questions[currentQuestionIndex] || null;
+        if(question?.type==ansType){
+            console.log("matches with type ",ansType)
+            return true;
+        }else{
+            console.log('doesnot match with type ',ansType)
+            return false;
+        }
+    }
+
+    function getProgressPercentage(curQuestionInd: number) {
+        return ((curQuestionInd + 1) / questions.length) * 100;
     }
     
     function getAnsweredCount() {
@@ -256,7 +269,7 @@
                         {:else if score >= questions.length * 0.6}
                             Good effort! You've learned a lot.
                         {:else}
-                            Keep studying! You'll improve with practice.
+                            Keep learning! You'll improve with practice.
                         {/if}
                     </div>
                     <div class="flex gap-4">
@@ -285,21 +298,21 @@
             <div class="card-body px-6 py-2 m-0">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="card-title">Question {currentQuestionIndex + 1} of {questions.length}</h2>
-                    <div class="badge badge-primary">{Math.round(getProgressPercentage())}% Complete</div>
+                    <div class="badge badge-primary">{Math.round(getProgressPercentage(currentQuestionIndex))}% Complete</div>
                 </div>
                 
                 <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-                    <div class="bg-primary h-2.5 rounded-full" style="width: {getProgressPercentage()}%"></div>
+                    <div class="bg-sky-400 h-2.5 rounded-full" style="width: {getProgressPercentage(currentQuestionIndex)}%"></div>
                 </div>
                 
                 <div class="mb-6">
-                    <p class="text-lg font-medium">{getCurrentQuestion().question}</p>
+                    <p class="text-lg font-medium">{questions[currentQuestionIndex].question}</p>
                 </div>
                 
-                {#if getCurrentQuestion()?.type === 'multiple_choice'}
+                {#if questions[currentQuestionIndex]?.type === 'multiple_choice' }
                     <div class="space-y-3 mb-6">
-                        {#if getCurrentQuestion()?.options && Array.isArray(getCurrentQuestion()?.options)}
-                            {#each getCurrentQuestion().options as option}
+                        {#if questions[currentQuestionIndex]?.options && Array.isArray(questions[currentQuestionIndex]?.options)}
+                            {#each questions[currentQuestionIndex].options as option}
                                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === option ? 'border-primary bg-primary/10' : ''}">
                                     <input 
                                         type="radio" 
@@ -313,13 +326,13 @@
                             {/each}
                         {/if}
                     </div>
-                {:else if getCurrentQuestion()?.type === 'true_false'}
+                {:else if questions[currentQuestionIndex]?.type === 'true_false' }
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <label class="flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-base-200 transition-colors {selectedAnswer === 'True' ? 'border-primary bg-primary/10' : ''}">
                             <input 
                                 type="radio" 
                                 name="answer" 
-                                value="True" 
+                                value="true" 
                                 bind:group={selectedAnswer}
                                 class="radio radio-primary mr-3"
                             />
@@ -329,14 +342,14 @@
                             <input 
                                 type="radio" 
                                 name="answer" 
-                                value="False" 
+                                value="false" 
                                 bind:group={selectedAnswer}
                                 class="radio radio-primary mr-3"
                             />
                             <span>False</span>
                         </label>
                     </div>
-                {:else if getCurrentQuestion()?.type === 'short_answer'}
+                {:else if questions[currentQuestionIndex]?.type === 'short_answer'}
                     <div class="mb-6">
                         <input 
                             type="text" 
@@ -345,6 +358,8 @@
                             class="input input-bordered w-full"
                         />
                     </div>
+                {:else}
+                    <div> question type not </div>
                 {/if}
                 
                 {#if showFeedback}
@@ -357,10 +372,10 @@
                         <span>{feedbackMessage}</span>
                     </div>
                     
-                    {#if getCurrentQuestion().explanation}
+                    {#if questions[currentQuestionIndex].explanation}
                         <div class="bg-base-200 p-4 rounded-lg mb-6 border border-sky-500 text-sky-500">
                             <p class="font-medium">Explanation:</p>
-                            <p>{getCurrentQuestion().explanation}</p>
+                            <p>{questions[currentQuestionIndex].explanation}</p>
                         </div>
                     {/if}
                 {/if}
@@ -385,7 +400,7 @@
                                 variant="primary" 
                                 on:click={checkAnswer}
                                 disabled={!selectedAnswer && !shortAnswer}
-                                class="gap-2"
+                                class="gap-2 {currentQuestionIndex>0?'mt-4':''}"
                             >
                                 <Check class="h-4 w-4" />
                                 Check Answer
@@ -394,7 +409,7 @@
                             <Button 
                                 variant="primary" 
                                 on:click={nextQuestion}
-                                class="gap-2"
+                                class="gap-2 border hover:bg-white/10"
                             >
                                 {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
                                 <ChevronRight class="h-4 w-4" />

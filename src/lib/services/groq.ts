@@ -15,14 +15,14 @@ export async function generateQuiz(topic: string, difficulty: 'easy' | 'medium' 
           content: `You are a financial education expert creating quizzes for a learning platform. 
           Create ${count} multiple-choice questions about ${topic} at ${difficulty} difficulty level.
           Each question should have 4 options with one correct answer.
-          Format your response as a valid JSON object with the following structure:
+          Format your response as a valid JSON object with the following structure,and dont respond with anything else/any other text/or any additional text, just only the data in curly braces:
           {
             "questions": [
               {
                 "question": "Question text here",
                 "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-                "correct": "Correct option text here",
-                "explanation": "Brief explanation of why this is the correct answer"
+                "correct": "Correct option text here(should match exactly wiht one of the option in the options list of the question)",
+                "explanation": "simple short explanation of why this is the correct answer (2 lines)"
               }
             ]
           }`

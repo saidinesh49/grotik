@@ -196,25 +196,33 @@
     function nextQuestion() {
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
-            selectedAnswer = '';
-            shortAnswer = '';
+            // Reset answer state based on the new question type
+            const nextQuestion = questions[currentQuestionIndex];
+            if (nextQuestion.type === 'multiple_choice' || nextQuestion.type === 'true_false') {
+                selectedAnswer = '';
+            } else if (nextQuestion.type === 'short_answer') {
+                shortAnswer = '';
+            }
             showFeedback = false;
-            saveQuizState(); // --- Persistence: Save on navigation ---
+            saveQuizState(); // Save state after navigation
         } else if (!quizCompleted) {
-             // Only mark completed if moving past the last question
             quizCompleted = true;
-            saveQuizState(); // --- Persistence: Save on completion ---
-            console.log('Quiz completed');
+            saveQuizState();
         }
     }
     
     function previousQuestion() {
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
-            selectedAnswer = ''; // Reset selection when moving back
-            shortAnswer = '';
-            showFeedback = false; // Hide feedback when moving
-            saveQuizState(); // --- Persistence: Save on navigation ---
+            // Reset answer state based on the previous question type
+            const prevQuestion = questions[currentQuestionIndex];
+            if (prevQuestion.type === 'multiple_choice' || prevQuestion.type === 'true_false') {
+                selectedAnswer = '';
+            } else if (prevQuestion.type === 'short_answer') {
+                shortAnswer = '';
+            }
+            showFeedback = false;
+            saveQuizState(); // Save state after navigation
         }
     }
 
@@ -231,17 +239,26 @@
         console.log('Quiz restarted');
     }
 
-    // --- Reactivity Fix: Make currentQuestion reactive ---
+    // Make currentQuestion reactive and properly handle state changes
     $: currentQuestion = (() => {
         if (!questions || !Array.isArray(questions) || questions.length === 0) {
-            // Return a default structure to avoid errors during loading/error states
             return { question: 'Loading question...', type: 'multiple_choice', options: [], answer: '' };
         }
-        // Ensure index is valid
         const index = Math.max(0, Math.min(currentQuestionIndex, questions.length - 1));
-        return questions[index];
+        const question = questions[index];
+        
+        // Reset answer state based on question type when question changes
+        if (question) {
+            if (question.type === 'multiple_choice' || question.type === 'true_false') {
+                selectedAnswer = '';
+            } else if (question.type === 'short_answer') {
+                shortAnswer = '';
+            }
+            showFeedback = false;
+        }
+        
+        return question;
     })();
-    // --- End Reactivity Fix ---
         
 
     // Keep original getProgressPercentage function...

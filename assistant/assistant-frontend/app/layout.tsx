@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeSync } from "@/components/theme-sync";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +30,25 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <style>{`
+          /* Hide any "static route" text that might appear */
+          [data-nextjs-static-route] {
+            display: none !important;
+          }
+        `}</style>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ThemeSync />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

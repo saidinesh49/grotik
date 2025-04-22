@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { base64ToFloat32Array, float32ToPcm16 } from '@/lib/utils';
+import { Meteors } from "@/components/magicui/meteors";
 
 // Define types for browser APIs
 declare global {
@@ -567,9 +568,14 @@ export default function GeminiVoiceChat() {
   }, [config.wakeWord, config.cancelPhrase, isStreaming]);
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 md:px-8">
+    <div className="container mx-auto py-6 px-4 sm:px-6 md:px-8">
       <div className="space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight">Gemini 2.0 Realtime Playground ✨</h1>
+            <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-lg border">
+              <Meteors number={30}/>
+                <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-7xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+                  Grotik AI
+                </span>
+            </div>
         
         {error && (
           <Alert variant="destructive">
@@ -579,18 +585,7 @@ export default function GeminiVoiceChat() {
         )}
 
         <Card>
-          <CardContent className="pt-6 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="system-prompt">System Prompt</Label>
-              <Textarea
-                id="system-prompt"
-                value={config.systemPrompt}
-                onChange={(e) => setConfig(prev => ({ ...prev, systemPrompt: e.target.value }))}
-                disabled={isConnected}
-                className="min-h-[100px]"
-              />
-            </div>
-
+          <CardContent className="pt-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="voice-select">Voice</Label>
               <Select
@@ -622,7 +617,7 @@ export default function GeminiVoiceChat() {
               <Label htmlFor="google-search">Enable Google Search</Label>
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <Checkbox
                 id="allow-interruptions"
                 checked={config.allowInterruptions}
@@ -631,9 +626,9 @@ export default function GeminiVoiceChat() {
                 }
               />
               <Label htmlFor="allow-interruptions">Allow Interruptions</Label>
-            </div>
+            </div> */}
 
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <Checkbox
                 id="wake-word-enabled"
                 checked={config.isWakeWordEnabled}
@@ -642,7 +637,7 @@ export default function GeminiVoiceChat() {
                 disabled={isConnected || config.allowInterruptions}
               />
               <Label htmlFor="wake-word-enabled">Enable Wake Word</Label>
-            </div>
+            </div> */}
 
             {config.allowInterruptions && (
               <div className="ml-6 mt-1 text-sm text-yellow-600">
@@ -687,7 +682,7 @@ export default function GeminiVoiceChat() {
                 disabled={isStreaming}
                 className="gap-2"
               >
-                <Mic className="h-4 w-4" />
+                <Mic className="h-3 w-3" />
                 Start Chatting
               </Button>
 
@@ -696,7 +691,7 @@ export default function GeminiVoiceChat() {
                 disabled={isStreaming}
                 className="gap-2"
               >
-                <Video className="h-4 w-4" />
+                <Video className="h-3 w-3" />
                 Start Chatting with Video
               </Button>
             
@@ -705,7 +700,7 @@ export default function GeminiVoiceChat() {
                 disabled={isStreaming}
                 className="gap-2"
               >
-                <Monitor className="h-4 w-4" />
+                <Monitor className="h-3 w-3" />
                 Start Chatting with Screen
               </Button>
             </>

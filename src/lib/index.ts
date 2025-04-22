@@ -3,10 +3,10 @@
 export let seo = {
 	title: 'Grotik - Your AI Learning Companion',
 	description:
-		'your finance assistant is a template for building Startup Applications. It is built with SvelteKit, TailwindCSS, and Svelte Animations',
+		'your finance ai assistant to help you with your finance.',
 	image: 'https://i.pinimg.com/736x/85/9a/92/859a92a2629f912010a0a72270aefedc.jpg',
 	twitter: 'SEO twitter',
-	url: 'https://startup-sve.vercel.app',
+	url: 'https://grotik.vercel.app',
 	keywords: 'svelte, sveltekit, tailwindcss, svelte animations, startup, template'
 };
 

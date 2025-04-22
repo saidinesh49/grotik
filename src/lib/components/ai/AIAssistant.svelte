@@ -4,6 +4,8 @@
     import LoadingOverlay from '$lib/components/ui/LoadingOverlay.svelte';
     import Button from '$lib/components/ui/button/button.svelte';
     import { MessageCircle, ExternalLink } from 'lucide-svelte';
+    import { theme } from '$lib/stores/theme';
+    import AuroraText from '$lib/components/magic/aurora-text.svelte';
 
     export let embedded = false;
     export let onClose: () => void = () => {};
@@ -15,13 +17,9 @@
     const MAX_RETRIES = 3;
 
     // URL to the Next.js AI assistant
-    // const assistantUrl = 'https://grotik-ai-assistant.vercel.app'; // Old Vercel URL
-    // const assistantUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render URL
     const assistantUrl = 'http://localhost:3001'; // Local development URL
     
     // Fallback URL in case the main one fails
-    // const fallbackUrl = 'https://grotik-ai-assistant.vercel.app/chat'; // Old Vercel Fallback
-    // const fallbackUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render Fallback
     const fallbackUrl = 'http://localhost:3001'; // Local fallback URL
     
     // Direct link to the Next.js app (for when iframe fails)
@@ -41,6 +39,16 @@
                 iframeError = true;
             };
         }
+
+        // Subscribe to theme changes
+        const unsubscribe = theme.subscribe((currentTheme) => {
+            // Store theme in sessionStorage
+            sessionStorage.setItem('theme', currentTheme);
+        });
+
+        return () => {
+            unsubscribe();
+        };
     });
 
     function retryLoading() {
@@ -66,9 +74,11 @@
     }
 </script>
 
-<div class="h-full w-full" in:fade>
+<div class="flex h-full w-full flex-col" in:fade>
     <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-xl font-bold">AI Assistant</h2>
+        <div class="flex-1 flex justify-center">
+            <AuroraText className="text-2xl font-bold">Ask Anything✨</AuroraText>
+        </div>
         {#if embedded}
             <button 
                 class="btn btn-outline btn-sm" 
@@ -79,10 +89,10 @@
         {/if}
     </div>
 
-    <div class="relative h-full w-full rounded-lg border border-base-300 bg-base-100 shadow-lg">
+    <div class="relative flex-1 overflow-hidden rounded-lg border border-base-300 bg-base-100 shadow-lg">
         <LoadingOverlay 
             show={isIframeLoading} 
-            text="Loading AI Assistant..." 
+            text="Loading grotik..." 
             spinnerSize="lg"
             spinnerColor="primary"
         />

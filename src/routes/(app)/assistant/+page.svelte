@@ -18,7 +18,7 @@
     }
 </script>
 
-<div class="container mx-auto px-4 py-8" in:fade>
+<div class="flex h-screen flex-col px-4 py-8" in:fade>
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-2">
             <button 
@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <div class="h-[calc(100vh-12rem)]">
+    <div class="flex-1">
         <AIAssistant />
     </div>
 </div> 

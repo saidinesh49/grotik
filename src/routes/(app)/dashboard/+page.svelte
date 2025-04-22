@@ -93,7 +93,7 @@
     ];
 
     function toggleAIAssistant() {
-        showAIAssistant = !showAIAssistant;
+        goto('/assistant');
     }
 </script>
 

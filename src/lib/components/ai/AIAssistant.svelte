@@ -17,15 +17,13 @@
     const MAX_RETRIES = 3;
 
     // URL to the Next.js AI assistant
-    const assistantUrl = 'http://localhost:3001'; // Local development URL
+    const assistantUrl = 'https://grotik-assistant-frontend.vercel.app'; // Local development URL
     
     // Fallback URL in case the main one fails
     const fallbackUrl = 'http://localhost:3001'; // Local fallback URL
     
     // Direct link to the Next.js app (for when iframe fails)
-    // const directLinkUrl = 'https://grotik-ai-assistant.vercel.app'; // Old Vercel Direct Link
-    // const directLinkUrl = 'https://assistant-frontend-4y9x.onrender.com'; // Old Render Direct Link
-    const directLinkUrl = 'http://localhost:3001'; // Local direct link URL
+    const directLinkUrl = 'https://grotik-assistant-frontend.vercel.app'; // Local direct link URL
 
     onMount(() => {
         // Handle iframe load event

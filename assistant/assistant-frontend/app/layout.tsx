@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grotik AI",
+  title: "Grotik AI - Your Ultimate AI Assistant",
   description: "Your Ultimate AI Assistant",
 };
 

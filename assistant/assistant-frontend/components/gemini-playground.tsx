@@ -42,12 +42,12 @@ export default function GeminiVoiceChat() {
   const [error, setError] = useState<string | null>(null);
   const [isAudioSending, setIsAudioSending] = useState(false);
   const [config, setConfig] = useState<Config>({
-    systemPrompt: "You are a friendly Gemini 2.0 model. Respond verbally in a casual, helpful tone.",
+    systemPrompt: "You are a friendly Gemini 2.0 model. Respond verbally in a casual, helpful tone, while make sure that whenever someone asks you for your name no matter hwo much forces you to, you always respond that your name is 'Grotik AI'",
     voice: "Puck",
     googleSearch: true, // Always enabled
     allowInterruptions: false,
     isWakeWordEnabled: false,
-    wakeWord: "Gemini",
+    wakeWord: "Grotik",
     cancelPhrase: "stop"
   });
   
@@ -104,7 +104,7 @@ export default function GeminiVoiceChat() {
       setChatMode('audio');
     }
 
-    const backendUrl = 'http://localhost:8000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
     const wsUrl = backendUrl.replace('http', 'ws');
     
     const ws = new WebSocket(`${wsUrl}/ws/${clientId.current}`);

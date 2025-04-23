@@ -10,6 +10,8 @@
     import confetti from 'canvas-confetti';
     import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte';
     import coursesData from '$lib/data/courses.json';
+    import { generateQuiz } from '$lib/services/groq';
+    import { shuffleArray } from '$lib/utils/array';
 
     let courseId = $page.params.courseId;
     let courseContent: any = null;
@@ -27,6 +29,8 @@
     let feedbackMessage = '';
     let answeredQuestions: boolean[] = [];
     let breadcrumbItems: { label: string; path?: string }[] = [];
+    let userAnsweredQuestions: number[] = [];
+    let useGroqQuestions = true;
 
     onMount(async () => {
         if (!$isAuthenticated) {
@@ -51,11 +55,29 @@
             const contentIndex = getContentIndex(courseId);
             if (contentIndex !== -1) {
                 courseContent = courseContentData[contentIndex];
-                if (courseContent && courseContent.check_your_understanding) {
-                    questions = courseContent.check_your_understanding;
-                    // Initialize answered questions array
-                    answeredQuestions = new Array(questions.length).fill(false);
+                
+                try {
+                    // Try to get questions from GROQ first
+                    const courseContentText = JSON.stringify(courseContent);
+                    const groqQuestions = await generateQuiz(course.title, courseContentText, 'medium', 5);
+                    console.log('GROQ Questions at UI:', groqQuestions);
+                    if (groqQuestions && groqQuestions.questions && groqQuestions.questions.length > 0) {
+                        questions = groqQuestions.questions;
+                        useGroqQuestions = true;
+                    } else {
+                        throw new Error('No questions returned from GROQ');
+                    }
+                } catch (groqError) {
+                    console.warn('Failed to get questions from GROQ, using fallback:', groqError);
+                    // Fallback to course content questions
+                    if (courseContent && courseContent.check_your_understanding) {
+                        questions = shuffleArray([...courseContent.check_your_understanding]);
+                        useGroqQuestions = false;
+                    }
                 }
+                
+                // Initialize userAnsweredQuestions array with 2 (not attempted)
+                userAnsweredQuestions = new Array(questions.length).fill(2);
             }
         } catch (err) {
             console.error('Error loading quiz questions:', err);
@@ -112,16 +134,23 @@
         let correct = false;
         
         if (question.type === 'multiple_choice' || question.type === 'true_false') {
-            console.log("selected answer:",selectedAnswer);
-            correct = selectedAnswer === (questions[currentQuestionIndex].answer).toString();
-            console.log(correct);
+            console.log("Selected answer:", selectedAnswer);
+            console.log("Question correct/answer:", question.correct || question.answer);
+            
+            // Normalize both values to lowercase strings for comparison
+            const userAnswer = selectedAnswer.toString().toLowerCase();
+            const correctAnswer = (question.correct || question.answer).toString().toLowerCase();
+            
+            correct = userAnswer === correctAnswer;
+            console.log("Comparison result:", correct);
+            console.log("User answer:", userAnswer);
+            console.log("Correct answer:", correctAnswer);
         } else if (question.type === 'short_answer') {
-            // Simple string matching for short answers
             correct = shortAnswer.toLowerCase().trim() === question.answer.toLowerCase().trim();
         }
         
         isCorrect = correct;
-        feedbackMessage = correct ? 'Correct!' : `Incorrect. The correct answer is: ${question.answer}`;
+        feedbackMessage = correct ? 'Correct!' : `Incorrect. The correct answer is: ${question.correct || question.answer}`;
         showFeedback = true;
         
         if (correct) {
@@ -141,30 +170,59 @@
     function nextQuestion() {
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
-            // Reset answer state based on the new question type
-            const nextQuestion = questions[currentQuestionIndex];
-            if (nextQuestion.type === 'multiple_choice' || nextQuestion.type === 'true_false') {
+            // Only reset these if the question hasn't been answered yet
+            if (userAnsweredQuestions[currentQuestionIndex] === 2) {
                 selectedAnswer = '';
-            } else if (nextQuestion.type === 'short_answer') {
                 shortAnswer = '';
+                showFeedback = false;
+            } else {
+                // If question was answered, show the previous feedback
+                const question = questions[currentQuestionIndex];
+                showFeedback = true;
+                isCorrect = userAnsweredQuestions[currentQuestionIndex] === 1;
+                if (useGroqQuestions) {
+                    feedbackMessage = isCorrect ? 
+                        (question.explanation || 'Correct! Well done!') :
+                        `Incorrect. The correct answer is: ${question.correct}`;
+                    selectedAnswer = isCorrect ? question.correct : '';
+                } else {
+                    feedbackMessage = isCorrect ? 
+                        'Correct! Well done!' :
+                        `Incorrect. The correct answer is: ${question.answer}`;
+                    selectedAnswer = isCorrect ? question.answer : '';
+                }
             }
-            showFeedback = false;
-        } else {
-            quizCompleted = true;
+        }else if(currentQuestionIndex === questions.length-1){
+            quizCompleted=true;
+        }else{
+          console.log("no questions");
         }
     }
-    
+
     function previousQuestion() {
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
-            // Reset answer state based on the previous question type
-            const prevQuestion = questions[currentQuestionIndex];
-            if (prevQuestion.type === 'multiple_choice' || prevQuestion.type === 'true_false') {
+            // Show previous answer state
+            const question = questions[currentQuestionIndex];
+            if (userAnsweredQuestions[currentQuestionIndex] !== 2) {
+                showFeedback = true;
+                isCorrect = userAnsweredQuestions[currentQuestionIndex] === 1;
+                if (useGroqQuestions) {
+                    feedbackMessage = isCorrect ? 
+                        (question.explanation || 'Correct! Well done!') :
+                        `Incorrect. The correct answer is: ${question.correct}`;
+                    selectedAnswer = isCorrect ? question.correct : '';
+                } else {
+                    feedbackMessage = isCorrect ? 
+                        'Correct! Well done!' :
+                        `Incorrect. The correct answer is: ${question.answer}`;
+                    selectedAnswer = isCorrect ? question.answer : '';
+                }
+            } else {
                 selectedAnswer = '';
-            } else if (prevQuestion.type === 'short_answer') {
                 shortAnswer = '';
+                showFeedback = false;
             }
-            showFeedback = false;
         }
     }
 
@@ -180,25 +238,7 @@
         score = 0;
         quizCompleted = false;
         showFeedback = false;
-        answeredQuestions = new Array(questions.length).fill(false);
-    }
-
-    function getCurrentQuestion() {
-        const question = questions[currentQuestionIndex] || null;
-        console.log("Current question data:", question);
-        console.log("Question type:", question?.type);
-        return question;
-    }
-
-    function isCurrentQuestionType(ansType:string = "multiple_choice"){
-        const question=questions[currentQuestionIndex] || null;
-        if(question?.type==ansType){
-            console.log("matches with type ",ansType)
-            return true;
-        }else{
-            console.log('doesnot match with type ',ansType)
-            return false;
-        }
+        userAnsweredQuestions = new Array(questions.length).fill(2);
     }
 
     function getProgressPercentage(curQuestionInd: number) {
@@ -206,7 +246,7 @@
     }
     
     function getAnsweredCount() {
-        return answeredQuestions.filter(Boolean).length;
+        return userAnsweredQuestions.filter((answer) => answer !== 2).length;
     }
 </script>
 
@@ -399,7 +439,7 @@
                             <Button 
                                 variant="primary" 
                                 on:click={checkAnswer}
-                                disabled={!selectedAnswer && !shortAnswer}
+                                disabled={!selectedAnswer}
                                 class="gap-2 {currentQuestionIndex>0?'mt-4':''}"
                             >
                                 <Check class="h-4 w-4" />

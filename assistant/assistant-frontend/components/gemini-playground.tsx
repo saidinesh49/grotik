@@ -44,7 +44,7 @@ export default function GeminiVoiceChat() {
   const [config, setConfig] = useState<Config>({
     systemPrompt: "You are a friendly Gemini 2.0 model. Respond verbally in a casual, helpful tone.",
     voice: "Puck",
-    googleSearch: true,
+    googleSearch: true, // Always enabled
     allowInterruptions: false,
     isWakeWordEnabled: false,
     wakeWord: "Gemini",
@@ -104,7 +104,7 @@ export default function GeminiVoiceChat() {
       setChatMode('audio');
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const backendUrl = 'http://localhost:8000';
     const wsUrl = backendUrl.replace('http', 'ws');
     
     const ws = new WebSocket(`${wsUrl}/ws/${clientId.current}`);
@@ -606,18 +606,9 @@ export default function GeminiVoiceChat() {
               </Select>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="google-search"
-                checked={config.googleSearch}
-                onCheckedChange={(checked) => 
-                  setConfig(prev => ({ ...prev, googleSearch: checked as boolean }))}
-                disabled={isConnected}
-              />
-              <Label htmlFor="google-search">Enable Google Search</Label>
-            </div>
+            {/* Google Search is always enabled in backend logic; UI option removed as requested. */}
 
-            {/* <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <Checkbox
                 id="allow-interruptions"
                 checked={config.allowInterruptions}
@@ -626,7 +617,7 @@ export default function GeminiVoiceChat() {
                 }
               />
               <Label htmlFor="allow-interruptions">Allow Interruptions</Label>
-            </div> */}
+            </div>
 
             {/* <div className="flex items-center space-x-2">
               <Checkbox

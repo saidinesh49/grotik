@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gemini Mutlimodal Playground",
-  description: "A playground for Realtime Multimodal Gemini 2.0",
+  title: "Grotik AI",
+  description: "Your Ultimate AI Assistant",
 };
 
 export default function RootLayout({

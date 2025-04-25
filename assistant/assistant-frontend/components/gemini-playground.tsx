@@ -570,12 +570,20 @@ export default function GeminiVoiceChat() {
   return (
     <div className="container mx-auto py-6 px-4 sm:px-6 md:px-8">
       <div className="space-y-6">
-            <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-lg border">
-              <Meteors number={30}/>
-                <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-7xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
-                  Grotik AI
-                </span>
-            </div>
+        <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-lg border">
+          <Meteors number={30}/>
+          <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-7xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+            Grotik AI
+          </span>
+        </div>
+
+        <Alert className="border-yellow-400 bg-yellow-50 dark:bg-black dark:text-yellow-50">
+          <AlertTitle className="text-yellow-800 dark:text-yellow-50">Important Notice</AlertTitle>
+          <AlertDescription className="text-yellow-700 dark:text-yellow-50">
+            Please give access to mic & camera, and if assistant does not respond then refresh the page.
+            Do not click the buttons multiple times.
+          </AlertDescription>
+        </Alert>
         
         {error && (
           <Alert variant="destructive">
@@ -612,12 +620,11 @@ export default function GeminiVoiceChat() {
               <Checkbox
                 id="allow-interruptions"
                 checked={config.allowInterruptions}
-                onCheckedChange={(checked) =>
-                  setConfig(prev => ({ ...prev, allowInterruptions: checked as boolean }))
-                }
+                onCheckedChange={(checked) => setConfig(prev => ({ ...prev, allowInterruptions: checked as boolean }))}
               />
               <Label htmlFor="allow-interruptions">Allow Interruptions</Label>
             </div>
+
 
             {/* <div className="flex items-center space-x-2">
               <Checkbox

@@ -20,7 +20,7 @@
     }
 
     function goToAIAssistant() {
-        goto('/assistant');
+        window.location.href = 'https://grotik-asssistant-frontend.onrender.com';
     }
 
     function goToCourse(courseId: string) {

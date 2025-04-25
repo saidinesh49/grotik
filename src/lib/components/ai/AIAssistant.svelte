@@ -17,7 +17,7 @@
     const MAX_RETRIES = 3;
 
     // URL to the Next.js AI assistant
-    const assistantUrl = 'https://grotik-assistant-frontend.vercel.app'; // Local development URL
+    const assistantUrl = 'https://grotik-assistant-frontend.onrender.com'; // Local development URL
     
     // Fallback URL in case the main one fails
     const fallbackUrl = 'http://localhost:3001'; // Local fallback URL

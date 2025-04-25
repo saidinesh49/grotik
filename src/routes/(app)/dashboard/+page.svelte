@@ -50,7 +50,7 @@
             value: '15', 
             change: '3 new today',
             color: 'bg-black/10 text-black dark:bg-white/10 dark:text-white',
-            link: '/assistant'
+            link: 'https://grotik-assistant-frontend.onrender.com'
         },
         { 
             icon: Coins, 
@@ -93,7 +93,7 @@
     ];
 
     function toggleAIAssistant() {
-        goto('/assistant');
+        window.location.href = 'https://grotik-assistant-frontend.onrender.com';
     }
 </script>
 

@@ -12,23 +12,18 @@
 	$: menuItems = [
 		{
 			id: 1,
-			label: 'Features',
-			href: '/features'
-		},
-		{
-			id: 2,
 			label: 'Courses',
 			href: '/courses'
 		},
 		{
-			id: 3,
-			label: 'About',
-			href: '/about'
+			id: 2,
+			label: 'AI Assistant',
+			href: 'https://grotik-assistant-frontend.onrender.com'
 		},
 		// Show dashboard link only when authenticated and not on dashboard page
 		...$isAuthenticated && !$page.url.pathname.includes('/dashboard')
 			? [{
-				id: 4,
+				id: 3,
 				label: 'Dashboard',
 				href: '/dashboard'
 			}]
